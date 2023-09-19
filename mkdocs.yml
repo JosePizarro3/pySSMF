@@ -1,0 +1,17 @@
+site_name: "SSMF Documentation"
+site_description: |
+  SSMF Documentation for strongly correlated metals 
+site_author: JMPizarro
+repo_url: https://github.com/JosePizarro3/SSMF
+nav:
+  - Home: index.md
+theme:
+  name: material
+  font:
+    text: 'Titillium Web'
+  logo: assets/nomad-logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.instant
+plugins:
+  - search
