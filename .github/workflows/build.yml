@@ -1,0 +1,50 @@
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install required dependencies for compiling F90
+      run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip
+
+    # - name: Check Fortran build
+      # Add commands here to build your Fortran code.
+      # run: |
+      #     gfortran -o my_program src/f90_routines/my_program.f90
+      #     ./my_program
+
+    - name: Checking py_tools and tests with `pycodestyle`
+      run: |
+        python -m pycodestyle --ignore=E501,E701,E731 src/py_tools tests
+
+    - name: Checking py_tools and tests with `pylint`
+      run: |
+        python -m pylint src/py_tools tests
+
+    - name: Checking py_tools and tests with `mypy`
+      run: |
+        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/py_tools tests
+
+    - name: Test with `pytest`
+      run: |
+        python -m pytest -sv tests
+
+    # Add Fortran specific testing here in the future
+    # - name: Fortran Tests
+    #   run: |
+    #       ./fortran_tests
