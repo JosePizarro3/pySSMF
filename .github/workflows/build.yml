@@ -55,5 +55,11 @@ jobs:
             mkdocs-bibtex-
       - name: Installing requirements
         run: pip install -r requirements.txt 
+      - name: Configure Git for GitHub Actions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
       - name: Deploying GH page for mkdocs
-        run: mkdocs gh-deploy --force
+        run: |
+          export GH_TOKEN=${{ secrets.GH_PAGES_TOKEN }}
+          mkdocs gh-deploy --force
