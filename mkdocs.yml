@@ -9,8 +9,6 @@ theme:
   name: material
   font:
     text: 'Titillium Web'
-  logo: assets/nomad-logo.png
-  favicon: assets/favicon.png
   features:
     - navigation.instant
 plugins:
