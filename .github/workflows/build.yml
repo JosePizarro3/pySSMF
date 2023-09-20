@@ -54,13 +54,12 @@ jobs:
           restore-keys: |
             mkdocs-material-
             mkdocs-bibtex-
-      - name: Installing requirements
-        run: pip install -r requirements.txt 
       - name: Configure Git for GitHub Actions
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploying GH page for mkdocs
         run: |
-          export GH_TOKEN=${{ secrets.GH_PAGES_TOKEN }}
-          mkdocs gh-deploy --force
+          mkdocs gh-deploy --force --token $GH_TOKEN
