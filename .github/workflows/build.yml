@@ -62,8 +62,8 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Deploying GH page for mkdocs
+      - name: Configure Git to use GitHub token
         run: |
-          mkdocs gh-deploy --force --token $GH_TOKEN
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      - name: Deploying GH page for mkdocs
+        run: mkdocs gh-deploy --force
