@@ -16,11 +16,12 @@
 
 import pytest
 import numpy as np
-from src.py_tools import schema
+
+from src.py_tools import System, BravaisLattice, Model
 
 
 def get_template_system():
-    system = schema.System()
+    system = System()
     system.n_atoms = 2
     system.labels = ['H', 'O']
     system.positions = np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1]])
@@ -29,14 +30,14 @@ def get_template_system():
 
 
 def get_template_bravais_lattice():
-    bravais_lattice = schema.BravaisLattice()
+    bravais_lattice = BravaisLattice()
     bravais_lattice.n_points = 3
     bravais_lattice.points = np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.2, 0.2, 0.2]])
     return bravais_lattice
 
 
 def get_template_model():
-    model = schema.Model()
+    model = Model()
     model.n_orbitals = 4
     model.degeneracy_factors = np.array([1, 2, 2])
     model.onsite_energies = np.array([0.5, 0.6, 0.7, 0.8])

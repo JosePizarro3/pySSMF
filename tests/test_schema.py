@@ -31,7 +31,7 @@ def test_bravais_lattice(example_bravais_lattice):
     # Check values
     assert example_bravais_lattice.n_points == 3
     assert np.array_equal(
-        example_bravais_lattice.points.magnitude, 
+        example_bravais_lattice.points.magnitude,
         np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.2, 0.2, 0.2]]))
     assert example_bravais_lattice.system
 

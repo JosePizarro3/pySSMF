@@ -15,6 +15,7 @@
 #
 
 import numpy as np
+
 from nomad.metainfo import MSection, Quantity, Section, SubSection
 
 

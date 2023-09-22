@@ -22,8 +22,7 @@ import logging
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
 # NOMAD schema
-from src.py_tools.schema import System, BravaisLattice
-from src.py_tools.utils import get_files
+from py_tools import get_files, System, BravaisLattice
 
 
 re_n = r'[\n\r]'

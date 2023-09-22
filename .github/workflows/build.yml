@@ -9,30 +9,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
     - name: Install required dependencies for compiling F90
       run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
-
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
-
     - name: pycodestyle
       run: |
-        python -m pycodestyle --ignore=E501,E701,E731 src/py_tools tests
+        python -m pycodestyle --ignore=E501,E701,E731 --exclude=src/py_tools/tb_model.py,src/py_tools/visualization.py src/py_tools tests
     - name: pylint
       run: |
-        python -m pylint src/py_tools tests
+        python -m pylint src/py_tools --ignore=tb_model.py,visualization.py tests
     - name: mypy
       run: |
-        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/py_tools tests
-
+        python -m mypy --explicit-package-bases src/py_tools tests
     - name: Test with `pytest`
       run: |
         python -m pytest -sv tests

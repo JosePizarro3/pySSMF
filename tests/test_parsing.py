@@ -18,7 +18,7 @@ import pytest
 import numpy as np
 import os
 
-from src.py_tools import schema
+from py_tools import Model
 from src.py_tools.parsing import MinimalWannier90Parser
 
 
@@ -29,7 +29,7 @@ def approx(value, abs=0, rel=1e-6):
 def test_wannier90_parser():
     '''Tests the MinimalWannier90Parser with provided wannier90 files.'''
 
-    model = schema.Model()
+    model = Model()
     filepath = os.path.join(os.path.dirname(__file__), 'data/wannier90/wannier90_hr.dat')
     MinimalWannier90Parser().parse(filepath, model, None)
 
