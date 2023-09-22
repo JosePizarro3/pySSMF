@@ -16,6 +16,7 @@
 
 import numpy as np
 
+
 class Pruner:
     def __init__(self, model):
         self.model = model
@@ -27,12 +28,11 @@ class Pruner:
         self.max_value = np.max(self.hopping_matrix_norms)
 
     def prune_by_threshold(self, threshold_factor=None):
-        """
-        Prune the model's hopping_matrix based on a threshold.
-        
+        """Prune the model's hopping_matrix based on a threshold.
+
         Args:
-            threshold_factor (float, optional): Multiplier for the max value to determine the pruning threshold. 
-                                                 Defaults to the class's threshold_factor if not provided.
+            threshold_factor (float, optional): Multiplier for the max value to determine
+            the pruning threshold. Defaults to the class's threshold_factor if not provided.
         """
         if threshold_factor:
             self.threshold_factor = threshold_factor
@@ -45,7 +45,7 @@ class Pruner:
 
         if small_matrix_indices.size > 0:
             last_small_index = small_matrix_indices[0]
-            
+
             # Update model attributes
             self.model.hopping_matrix = self.model.hopping_matrix[:last_small_index]
             self.model.bravais_lattice.points = self.model.bravais_lattice.points[:last_small_index]

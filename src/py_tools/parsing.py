@@ -18,13 +18,13 @@ import numpy as np
 import os
 import logging
 
-from utils import get_files
+from src.py_tools.utils import get_files
 
 # NOMAD functionalities for parsing the tight-binding calculation files
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
 # NOMAD schema
-from schema import System, BravaisLattice
+from src.py_tools.schema import System, BravaisLattice
 
 
 re_n = r'[\n\r]'
@@ -42,7 +42,7 @@ class WOutParser(TextParser):
             Quantity('labels', r'\|\s*([A-Z][a-z]*)', repeats=True),
             Quantity('positions', rf'\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)', repeats=True)
         ]
-        
+
         self._quantities = [
             Quantity(
                 'lattice_vectors', r'\s*a_\d\s*([\d\-\s\.]+)', repeats=True),
@@ -53,7 +53,7 @@ class WOutParser(TextParser):
 
 
 class HrParser(TextParser):
-    """Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors 
+    """Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors
     at the begining of the file and the list of hoppings.
     """
     def __init__(self):

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-import numpy as np 
+import numpy as np
 from nomad.metainfo import MSection, Quantity, Section, SubSection
 
 
@@ -81,13 +81,13 @@ class BravaisLattice(MSection):
         description='''
         Number of Bravais lattice points.
         ''')
-    
+
     points = Quantity(
         type=np.float64,
         shape=['n_points', 3],
         unit='angstrom',
         description='''
-        Values of the Bravais lattice points used to obtain the hopping integrals. They are 
+        Values of the Bravais lattice points used to obtain the hopping integrals. They are
         sorted from smaller to larger values of the norm.
         ''')
 

@@ -12,6 +12,22 @@
             "env": {
                 "PYTHONDONTWRITEBYTECODE": "1"
             }
+        },
+        {
+            "name": "SSMF pytest",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-sv", 
+                "${workspaceFolder}/tests"
+            ],
+            "python": "${workspaceFolder}/.pyenv/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1"
+            }
         }
     ]
 }
