@@ -36,13 +36,10 @@ class Pruner:
         """
         if threshold_factor:
             self.threshold_factor = threshold_factor
-
         threshold = self.threshold_factor * self.max_value
 
         matrix_sums = np.sum(self.hopping_matrix_norms, axis=(1, 2))
-
         small_matrix_indices = np.where(matrix_sums < threshold * self.model.n_orbitals * self.model.n_orbitals)[0]
-
         if small_matrix_indices.size > 0:
             last_small_index = small_matrix_indices[0]
 

@@ -18,7 +18,7 @@ import pytest
 import numpy as np
 import os
 
-from py_tools import Model
+from src.py_tools import Model
 from src.py_tools.parsing import MinimalWannier90Parser
 
 
