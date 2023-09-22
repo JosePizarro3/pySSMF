@@ -23,7 +23,7 @@ def test_pruner_initialization(example_model):
 
     assert pruner.model == example_model
     assert pruner.threshold_factor == 1e-2
-    assert pruner.max_value == 0.6 
+    assert pruner.max_value == 0.6
 
 
 def test_prune_by_threshold(example_model):
