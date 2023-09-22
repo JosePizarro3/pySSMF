@@ -22,16 +22,16 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
-        
+
     - name: pycodestyle
       run: |
-        python -m pycodestyle --ignore=E501,E701,E731 *parsers tests
+        python -m pycodestyle --ignore=E501,E701,E731 src/py_tools tests
     - name: pylint
       run: |
-        python -m pylint *parsers tests
+        python -m pylint src/py_tools tests
     - name: mypy
       run: |
-        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
+        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/py_tools tests
 
     - name: Test with `pytest`
       run: |
