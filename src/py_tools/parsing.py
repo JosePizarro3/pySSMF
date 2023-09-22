@@ -18,13 +18,12 @@ import numpy as np
 import os
 import logging
 
-from src.py_tools.utils import get_files
-
 # NOMAD functionalities for parsing the tight-binding calculation files
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
 # NOMAD schema
 from src.py_tools.schema import System, BravaisLattice
+from src.py_tools.utils import get_files
 
 
 re_n = r'[\n\r]'
@@ -40,7 +39,7 @@ class WOutParser(TextParser):
     def init_quantities(self):
         structure_quantities = [
             Quantity('labels', r'\|\s*([A-Z][a-z]*)', repeats=True),
-            Quantity('positions', rf'\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)', repeats=True)
+            Quantity('positions', r'\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)', repeats=True)
         ]
 
         self._quantities = [
@@ -62,7 +61,7 @@ class HrParser(TextParser):
     def init_quantities(self):
         self._quantities = [
             Quantity('degeneracy_factors', r'\s*written on[\s\w]*:\d*:\d*\s*([\d\s]+)'),
-            Quantity('hoppings', rf'\s*([-\d\s.]+)', repeats=False)
+            Quantity('hoppings', r'\s*([-\d\s.]+)', repeats=False)
         ]
 
 
@@ -143,7 +142,7 @@ class MinimalTBStudioParser():
     def init_parser(self):
         pass
 
-    def parse(self, filepath, model, logger):
+    def parse(self, filepath, model, logger):  # pylint: disable=unused-argument
         self.filepath = filepath
         self.logger = logging.getLogger(__name__) if logger is None else logger
         self.init_parser()
