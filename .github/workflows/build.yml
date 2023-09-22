@@ -1,6 +1,6 @@
 name: Build, Test, and Deploy MkDocs
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -9,32 +9,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
     - name: Install required dependencies for compiling F90
       run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
-
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
-
-    # - name: Check Fortran build
-      # Add commands here to build your Fortran code.
-      # run: |
-      #     gfortran -o my_program src/f90_routines/my_program.f90
-      #     ./my_program
-
+    - name: pycodestyle
+      run: |
+        python -m pycodestyle --ignore=E501,E701,E731 --exclude=src/py_tools/tb_model.py,src/py_tools/visualization.py src/py_tools tests
+    - name: pylint
+      run: |
+        python -m pylint src/py_tools --ignore=tb_model.py,visualization.py tests
+    - name: mypy
+      run: |
+        python -m mypy --explicit-package-bases src/py_tools tests
     - name: Test with `pytest`
       run: |
         python -m pytest -sv tests
-
-    # Add Fortran specific testing here in the future
-    # - name: Fortran Tests
-    #   run: |
-    #       ./fortran_tests
-  
