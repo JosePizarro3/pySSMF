@@ -5,11 +5,3 @@ site_author: JMPizarro
 repo_url: https://github.com/JosePizarro3/SSMF
 nav:
   - Home: index.md
-theme:
-  name: material
-  font:
-    text: 'Titillium Web'
-  features:
-    - navigation.instant
-plugins:
-  - search
