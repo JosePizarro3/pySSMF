@@ -44,7 +44,7 @@ class Pruner:
                 the pruning threshold. Defaults to 5% of the max_value.
         """
         logger = logging.getLogger(__name__) if logger is None else logger
-        # TODO improve this method. Right now it is assuming that hoppings are ordered from 
+        # TODO improve this method. Right now it is assuming that hoppings are ordered from
         # larger to smaller values as far as the Bravais norm increases. This might give
         # problems for hoppings structures which are not so trivial.
         if not self.max_value and not self.hopping_matrix_norms:

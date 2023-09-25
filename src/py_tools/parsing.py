@@ -187,7 +187,7 @@ def read_input(input_filepath: str, logger: logging.Logger = None):
         logger.error(f'Input file {input_filepath} not found.')
     except json.JSONDecodeError:
         logger.error(f'Failed to decode JSON in input file {input_filepath}.')
-    
+
     code_name = input_data.get('code', '')
     if code_name == 'SSMF':
         return input_data
