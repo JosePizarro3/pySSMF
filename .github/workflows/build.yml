@@ -41,14 +41,22 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Install MKDocs
-        run: pip install mkdocs mkdocs-material
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
+      - uses: actions/cache@v3
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+            mkdocs-bibtex-
+      - name: Installing requirements
+        run: pip install -r requirements.txt 
       - name: Build MKDocs Documentation
         run: mkdocs build --verbose
       - name: Deploy MKDocs to GitHub Pages
         run: |
           if [ -n "$GITHUB_TOKEN" ]; then
-            mkdocs gh-deploy --force --clean --remote-name origin --branch gh-pages
+            mkdocs gh-deploy --force
           else
             echo "Set the GH_PAGES_TOKEN secret in your repository for deploying to GitHub Pages."
             exit 1
