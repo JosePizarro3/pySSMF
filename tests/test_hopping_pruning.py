@@ -18,25 +18,21 @@ import numpy as np
 from src.py_tools.hopping_pruning import Pruner
 
 
-def test_pruner_initialization(example_model):
+def test_pruner(example_model):
     pruner = Pruner(example_model)
-
+    # Initialization
     assert pruner.model == example_model
-    assert pruner.threshold_factor == 1e-2
     assert pruner.max_value == 0.6
-
-
-def test_prune_by_threshold(example_model):
-    pruner = Pruner(example_model)
-
-    pruner.prune_by_threshold(0.01)
+    # Pruning by default threshold (0.05)
+    pruner.prune_by_threshold()
     assert example_model.bravais_lattice.n_points == 3
     assert example_model.hopping_matrix.shape[0] == 3
     assert example_model.degeneracy_factors.shape[0] == 3
     assert np.array_equal(example_model.bravais_lattice.points[-1].magnitude, np.array([0.2, 0.2, 0.2]))
-
-    # pruner.prune_by_threshold(0.1)
-    # assert example_model.bravais_lattice.n_points == 2
-    # assert example_model.hopping_matrix.shape[0] == 2
-    # assert example_model.degeneracy_factors.shape[0] == 2
-    # assert np.array_equal(example_model.bravais_lattice.points[-1], np.array([0.1, 0.1, 0.1]))
+    # Pruning by an input threshold
+    pruner = Pruner(example_model)
+    pruner.prune_by_threshold(0.15)
+    assert example_model.bravais_lattice.n_points == 1
+    assert example_model.hopping_matrix.shape[0] == 1
+    assert example_model.degeneracy_factors.shape[0] == 1
+    assert np.array_equal(example_model.bravais_lattice.points[-1].magnitude, np.array([0.0, 0.0, 0.0]))
