@@ -1,33 +1,57 @@
 name: Build, Test, and Deploy MkDocs
-
-on: [push]
-
+on:
+  push:
+    branches:
+      - '*'
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Install required dependencies for compiling F90
-      run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install Python dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: pycodestyle
-      run: |
-        python -m pycodestyle --ignore=E501,E701,E731 --exclude=src/py_tools/tb_model.py,src/py_tools/visualization.py src/py_tools tests
-    - name: pylint
-      run: |
-        python -m pylint src/py_tools --ignore=tb_model.py,visualization.py tests
-    - name: mypy
-      run: |
-        python -m mypy --explicit-package-bases src/py_tools tests
-    - name: Test with `pytest`
-      run: |
-        python -m pytest -sv tests
+      - uses: actions/checkout@v2
+      - name: Install required dependencies for compiling F90
+        run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: pycodestyle
+        run: |
+          python -m pycodestyle --ignore=E501,E701,E731 --exclude=src/py_tools/tb_model.py,src/py_tools/visualization.py src/py_tools tests
+      - name: pylint
+        run: |
+          python -m pylint src/py_tools --ignore=tb_model.py,visualization.py tests
+      - name: mypy
+        run: |
+          python -m mypy --explicit-package-bases src/py_tools tests
+      - name: Test with `pytest`
+        run: |
+          python -m pytest -sv tests
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # This ensures that the deployment job runs after the build job
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install MKDocs
+        run: pip install mkdocs mkdocs-material
+      - name: Build MKDocs Documentation
+        run: mkdocs build --verbose
+      - name: Deploy MKDocs to GitHub Pages
+        run: |
+          if [ -n "$GITHUB_TOKEN" ]; then
+            mkdocs gh-deploy --force --clean
+          else
+            echo "Set the GH_PAGES_TOKEN secret in your repository for deploying to GitHub Pages."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
