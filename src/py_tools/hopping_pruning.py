@@ -20,23 +20,22 @@ import numpy as np
 class Pruner:
     def __init__(self, model):
         self.model = model
-        self.threshold_factor = 1e-2
         self.update_norms_and_max_value()
 
     def update_norms_and_max_value(self):
+        """Stores the hopping_matrix norms and their maximum value.
+        """
         self.hopping_matrix_norms = np.abs(self.model.hopping_matrix.magnitude)
         self.max_value = np.max(self.hopping_matrix_norms)
 
-    def prune_by_threshold(self, threshold_factor=None):
+    def prune_by_threshold(self, threshold_factor: float = 0.05):
         """Prune the model's hopping_matrix based on a threshold.
 
         Args:
-            threshold_factor (float, optional): Multiplier for the max value to determine
-            the pruning threshold. Defaults to the class's threshold_factor if not provided.
+            threshold_factor (float, optional): Percentage of the max_value to determine
+                the pruning threshold. Defaults to 5% of the max_value.
         """
-        if threshold_factor:
-            self.threshold_factor = threshold_factor
-        threshold = self.threshold_factor * self.max_value
+        threshold = threshold_factor * self.max_value
 
         matrix_sums = np.sum(self.hopping_matrix_norms, axis=(1, 2))
         small_matrix_indices = np.where(matrix_sums < threshold * self.model.n_orbitals * self.model.n_orbitals)[0]

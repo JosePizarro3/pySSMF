@@ -16,3 +16,4 @@
 
 from .utils import get_files
 from .schema import System, BravaisLattice, Model
+from .parsing import read_input

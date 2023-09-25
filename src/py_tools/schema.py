@@ -29,7 +29,7 @@ class System(MSection):
     n_atoms = Quantity(
         type=np.int32,
         description='''
-        The total number of species (atoms, particles) in the system.
+        The total number of atoms in the system.
         ''')
 
     labels = Quantity(
