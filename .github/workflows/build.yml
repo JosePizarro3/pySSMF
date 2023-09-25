@@ -48,7 +48,7 @@ jobs:
       - name: Deploy MKDocs to GitHub Pages
         run: |
           if [ -n "$GITHUB_TOKEN" ]; then
-            mkdocs gh-deploy --force --clean
+            mkdocs gh-deploy --force --clean --remote-name origin --branch gh-pages
           else
             echo "Set the GH_PAGES_TOKEN secret in your repository for deploying to GitHub Pages."
             exit 1
