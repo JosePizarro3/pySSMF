@@ -36,12 +36,12 @@ class Pruner:
             self.hopping_matrix_norms = np.abs(self.model.hopping_matrix.magnitude)
             self.max_value = np.max(self.hopping_matrix_norms)
 
-    def prune_by_threshold(self, threshold_factor: float = 0.05, logger: logging.Logger = None):
+    def prune_by_threshold(self, threshold_factor: float = 0.03, logger: logging.Logger = None):
         """Prune the model's hopping_matrix based on a threshold.
 
         Args:
             threshold_factor (float, optional): Percentage of the max_value to determine
-                the pruning threshold. Defaults to 5% of the max_value.
+                the pruning threshold. Defaults to 3% of the max_value.
         """
         logger = logging.getLogger(__name__) if logger is None else logger
         # TODO improve this method. Right now it is assuming that hoppings are ordered from
@@ -56,7 +56,10 @@ class Pruner:
         n_orbitals = self.model.n_orbitals if self.model.n_orbitals else 1
         small_matrix_indices = np.where(matrix_sums < threshold * n_orbitals * n_orbitals)[0]
         if small_matrix_indices.size > 0:
-            last_small_index = small_matrix_indices[0]
+            if small_matrix_indices[0] == 0 and small_matrix_indices[1] != 1:
+                last_small_index = small_matrix_indices[1]
+            else:
+                last_small_index = small_matrix_indices[0]
 
             # Update model attributes
             try:

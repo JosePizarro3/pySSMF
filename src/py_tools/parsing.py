@@ -93,6 +93,7 @@ class MinimalWannier90Parser():
         if self.wout_parser.get('lattice_vectors', []):
             lattice_vectors = np.vstack(self.wout_parser.get('lattice_vectors', [])[-3:])
             sec_system.lattice_vectors = lattice_vectors * ureg.angstrom
+            sec_system.periodic = [True, True, True]
         sec_system.labels = structure.get('labels')
         if structure.get('positions') is not None:
             sec_system.positions = structure.get('positions') * ureg.angstrom
