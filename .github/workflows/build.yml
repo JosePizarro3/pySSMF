@@ -43,13 +43,19 @@ jobs:
       - name: Install MKDocs
         run: pip install mkdocs
       - name: Build MKDocs Documentation
-        run: mkdocs build --verbose
+        run: mkdocs build --verbose-
+      - name: Debug
+        run: |
+          echo "GitHub Repository: $GITHUB_REPOSITORY"
+          echo "GitHub Token: $GITHUB_TOKEN"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
       - name: Deploy MKDocs to GitHub Pages
         run: |
           if [ -n "$GITHUB_TOKEN" ]; then
             mkdocs gh-deploy --force --clean
           else
-            echo "Set the GITHUB_TOKEN secret in your repository for deploying to GitHub Pages."
+            echo "Set the GH_PAGES_TOKEN secret in your repository for deploying to GitHub Pages."
             exit 1
           fi
         env:
