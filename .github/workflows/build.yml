@@ -46,10 +46,10 @@ jobs:
         run: mkdocs build --verbose
       - name: Deploy MKDocs to GitHub Pages
         run: |
-          if [ -n "$GH_PAGES_TOKEN" ]; then
+          if [ -n "$GITHUB_TOKEN" ]; then
             mkdocs gh-deploy --force --clean
           else
-            echo "Set the GH_PAGES_TOKEN secret in your repository for deploying to GitHub Pages."
+            echo "Set the GITHUB_TOKEN secret in your repository for deploying to GitHub Pages."
             exit 1
           fi
         env:
