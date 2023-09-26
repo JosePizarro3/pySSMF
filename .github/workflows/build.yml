@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install required dependencies for compiling F90
-        run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
+      - name: Install required dependencies for compiling and debugging F90
+        run: sudo apt-get install gfortran liblapack-dev lldb
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
