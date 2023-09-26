@@ -115,8 +115,8 @@ class MinimalWannier90Parser():
             # Parse BravaisLattice
             bravais_lattice.n_points = n_points
             bravais_lattice_points = wann90_hops[:, 0, 0, :3]
-            bravais_lattice_points = bravais_lattice_points @ bravais_lattice.system.lattice_vectors
-            sorted_indices = np.argsort(np.linalg.norm(bravais_lattice_points.magnitude, axis=1))
+            bravais_lattice_points = bravais_lattice_points @ bravais_lattice.system.lattice_vectors.magnitude
+            sorted_indices = np.argsort(np.linalg.norm(bravais_lattice_points, axis=1))
             bravais_lattice_points_sorted = bravais_lattice_points[sorted_indices]
             bravais_lattice.points = bravais_lattice_points_sorted
             # Parse degeneracy factors

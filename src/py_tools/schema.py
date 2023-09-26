@@ -108,7 +108,7 @@ class BravaisLattice(MSection):
         Values of the Bravais lattice points used to obtain the hopping integrals. They are
         sorted from smaller to larger values of the norm.
         ''')
-    
+
     formula_hill = Quantity(
         type=str,
         description='''

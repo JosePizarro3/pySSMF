@@ -73,7 +73,7 @@ class TBHamiltonian(KSampling):
         self.n_orbitals = self.model.n_orbitals
         self.n_k_points = len(self.kpoints)
         self.n_r_points = self.model.bravais_lattice.n_points
-    
+
     def __repr__(self):
         cls_name = self.__class__.__name__
         args = [
@@ -96,7 +96,7 @@ class TBHamiltonian(KSampling):
             hop = self.model.hopping_matrix.magnitude[nr] if nr != 0 else onsite_energies
             hamiltonian += hop[np.newaxis, :, :] * exp_factor[:, np.newaxis, np.newaxis]
         return hamiltonian
-    
+
     def diagonalize(self, kpoints):
         eigenvalues, eigenvectors = np.linalg.eigh(self.hamiltonian(kpoints))
         return eigenvectors, eigenvalues
