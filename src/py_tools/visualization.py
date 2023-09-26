@@ -63,3 +63,46 @@ def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_
 
     plt.tight_layout(rect=[0, 0.05, 0.9, 1])  # Adjust the right bound to 0.9 to provide space for the colorbar
     plt.show()
+
+
+def plot_band_structure(eigenvalues, kpoints, tb_hamiltonian, special_points=None):
+    """
+    Plot the band structure of a Hamiltonian.
+
+    Args:
+        eigenvalues (np.ndarray): Eigenvalues of the Hamiltonian matrix of shape (Nk, Norb).
+        kpoints (np.ndarray): Array of k-points with shape (Nk, 3).
+        special_points (dict, optional): Dictionary of special points and their labels.
+    """
+
+    num_bands = eigenvalues.shape[1]
+
+    # Create a figure
+    plt.figure(figsize=(8, 6))
+
+    # Iterate over eigenvalues for each band
+    for band_idx in range(num_bands):
+        plt.plot(np.arange(len(eigenvalues)), eigenvalues[:, band_idx], label=f'Band {band_idx + 1}')
+
+    # Customize x-axis labeling based on special points
+    if special_points is not None:
+        x_labels = [''] * (len(special_points))  # Initialize labels with empty strings
+        x_ticks = []
+
+        i = 0
+        for key, val in special_points.items():
+            if np.where(np.all(val == tb_hamiltonian.k_path.kpts, axis=1))[0].size > 0:
+                index = np.where(np.all(val == tb_hamiltonian.k_path.kpts, axis=1))[0][0]
+                x_labels[i] = key
+                x_ticks.append(index)
+                i += 1
+        plt.xticks(x_ticks, x_labels)
+
+    plt.xlim(0, len(eigenvalues))
+    plt.xlabel('k-points')
+    plt.ylabel('Energy')
+    plt.title('Band Structure')
+    plt.legend()
+    plt.grid(True)
+
+    plt.show()
