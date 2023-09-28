@@ -17,7 +17,7 @@
 import numpy as np
 import logging
 
-from . import Model
+from .schema import Model
 
 
 class Pruner:

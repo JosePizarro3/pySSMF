@@ -1,0 +1,6 @@
+{
+    "code": "SSMF",
+    "working_directory": "/home/josepizarro/SSMF/work_dir",
+    "prune_threshold": 0.03,
+    "model": "lco_hr.dat"
+}

@@ -24,7 +24,7 @@ from ase.dft.kpoints import monkhorst_pack, BandPath
 
 from nomad.atomutils import Formula
 from nomad.units import ureg
-from . import Model
+from .schema import Model
 
 
 class KSampling:
@@ -104,17 +104,10 @@ class KSampling:
         return monkhorst_pack(self.k_grid) @ self.system.reciprocal_lattice_vectors.magnitude
 
 
-class KGridType(enum.Enum):
-    BANDS = 'bands'
-    FULL_BZ = 'full_bz'
-
-    @classmethod
-    def get_values(cls):
-        return [member.value for member in cls]
-
-
 class TBHamiltonian(KSampling):
-    def __init__(self, model: Model, k_grid_type: KGridType, k_grid: list = [1, 1, 1]):
+    _valid_k_grid_types = ['bands', 'full_bz']
+
+    def __init__(self, model: Model, k_grid_type: str, k_grid: list = [1, 1, 1]):
         """Initializes the `TBHamiltonian` object for the `Model` object, k_grid_type, and optional k_grid
         for generating kpoints. It also calculates the Hamiltonian matrix dimensions
         (n_k_points, n_orbitals, n_orbitals), and the number of R Bravais lattice vectors,
@@ -122,11 +115,11 @@ class TBHamiltonian(KSampling):
 
         Args:
             model (Model): Input tight-binding model class.
-            k_grid_type (KGridType): Enum with the type of k-point grid ('bands' or 'full_bz').
+            k_grid_type (str): Enum with the type of k-point grid ('bands' or 'full_bz').
             k_grid (list, optional): List of k_grid for generating the Monkhorst-Pack mesh
                 for the 'full_bz' calculation. Default is [1, 1, 1].
         """
-        if k_grid_type not in KGridType.get_values():
+        if k_grid_type not in self._valid_k_grid_types:
             raise ValueError("Invalid k_grid_type. Please, use 'bands' or 'full_bz'.")
         super().__init__(model, k_grid)
         self.k_grid_type = k_grid_type

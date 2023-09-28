@@ -23,8 +23,8 @@ import json
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
 # NOMAD schema
-from . import get_files, System, BravaisLattice, Model
-
+from .schema import System, BravaisLattice, Model
+from .utils import get_files
 
 re_n = r'[\n\r]'
 
@@ -169,29 +169,3 @@ class MinimalTBStudioParser():
         self.filepath = filepath
         self.logger = logging.getLogger(__name__) if logger is None else logger
         self.init_parser()
-
-
-def read_input(input_filepath: str, logger: logging.Logger = None) -> dict:
-    """Reads the SSMF code-specific JSON input file and returns a dictionary with the read
-    parameters.
-
-    Args:
-        input_filepath (str): input JSON file.
-
-    Returns:
-        dict: dictionary of input parameters for running SSMF.
-    """
-    logger = logging.getLogger(__name__) if logger is None else logger
-    input_data = {}
-    try:
-        with open(input_filepath, 'r') as file:
-            input_data = json.load(file)
-    except FileNotFoundError:
-        logger.error(f'Input file {input_filepath} not found.')
-    except json.JSONDecodeError:
-        logger.error(f'Failed to decode JSON in input file {input_filepath}.')
-
-    code_name = input_data.get('code', '')
-    if code_name != 'SSMF':
-        logger.error(f'Could not recognize the input JSON file {input_filepath} as readable by the SSMF code.')
-    return input_data
