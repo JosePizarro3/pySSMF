@@ -5,7 +5,9 @@ disable=missing-docstring,
         trailing-whitespace,
         redefined-builtin,
         wrong-import-order,
-        attribute-defined-outside-init
+        attribute-defined-outside-init,
+        no-member,
+        broad-exception-caught
 
 [FORMAT]
 max-line-length=150

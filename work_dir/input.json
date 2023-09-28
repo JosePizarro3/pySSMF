@@ -1,0 +1,5 @@
+{
+    "code": "SSMF",
+    "prune_threshold": 0.03,
+    "file_tbmodel": "/home/josepizarro/fairmat/data_examples/PROJ_wannier90/lco_mlwf/lco_hr.dat"
+}

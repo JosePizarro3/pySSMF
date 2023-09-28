@@ -17,6 +17,6 @@
         "--ignore-missing-imports",
         "--follow-imports=silent",
         "--no-strict-optional"
-    ],
+    ]
 }
 

@@ -16,6 +16,9 @@
 
 import os
 from glob import glob
+import h5py
+from typing import Union
+import numpy as np
 
 
 def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = True):
@@ -46,3 +49,18 @@ def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = Tru
 
     filenames = [f for f in filenames if os.access(f, os.F_OK)]
     return filenames
+
+
+def extract_hdf5_dataset(data: Union[h5py.Dataset, h5py.Group], default: Union[bool, int, float, np.ndarray, None] = None):
+    """Extracts the hdf5 dataset and returns it as its Python native type. It can also return
+    a default value if specified and data is not a `h5py.Dataset` object.
+
+    Args:
+        data (Union[h5py.Dataset, h5py.Group]): Input h5py data.
+        default (Union[bool, int, float, np.ndarray, None], optional): Output default value.
+            Defaults to None.
+    """
+    if isinstance(data, h5py.Dataset):
+        return data[()]
+    else:
+        return default

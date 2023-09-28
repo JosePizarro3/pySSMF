@@ -5,7 +5,7 @@
             "name": "SSMF python",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/src/py_tools/tb_model.py",
+            "program": "${workspaceFolder}/debug.py",
             "python": "${workspaceFolder}/.pyenv/bin/python",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -28,6 +28,39 @@
             "env": {
                 "PYTHONDONTWRITEBYTECODE": "1"
             }
+        },
+        {
+            "name": "SSMF debug Fortran",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/diagonalize",  // Adjust the path to your Fortran executable
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "setupCommands": [
+              {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+              }
+            ],
+            "preLaunchTask": "Build Fortran",  // Name of the build task to run before debugging
+            "miDebuggerPath": "/usr/bin/lldb",  // Path to LLDB executable on your system
+            "sourceFileMap": {
+              "${workspaceFolder}": "${workspaceFolder}"  // Adjust if needed
+            },
+            "logging": {
+              "moduleLoad": false,
+              "trace": false,
+              "engineLogging": false,
+              "programOutput": false,
+              "exceptions": false
+            },
+            "stopOnError": true,
+            "showDevTools": "never"
         }
     ]
 }

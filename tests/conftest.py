@@ -42,9 +42,9 @@ def get_template_model():
     model.degeneracy_factors = np.array([1, 2, 2])
     model.onsite_energies = np.array([0.5, 0.6, 0.7, 0.8])
     model.hopping_matrix = np.array([
-        [[0.1, 0.2], [0.3, 0.4]],
-        [[0.2, 0.3], [0.4, 0.5]],
-        [[0.3, 0.4], [0.5, 0.6]]
+        [[0.6, 0.5], [0.4, 0.3]],
+        [[0.5, 0.4], [0.3, 0.2]],
+        [[0.4, 0.3], [0.2, 0.1]]
     ])
     return model
 

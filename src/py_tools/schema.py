@@ -29,7 +29,7 @@ class System(MSection):
     n_atoms = Quantity(
         type=np.int32,
         description='''
-        The total number of species (atoms, particles) in the system.
+        The total number of atoms in the system.
         ''')
 
     labels = Quantity(
@@ -67,6 +67,23 @@ class System(MSection):
         index runs over the 3 lattice vectors.
         ''')
 
+    reciprocal_lattice_vectors = Quantity(
+        type=np.float64,
+        shape=[3, 3],
+        unit='1/angstrom',
+        description='''
+        Reciprocal lattice vectors of the simulation cell, in cartesian coordinates and with the 2 $pi$ pre-factor.
+        The first index runs over the $x,y,z$ Cartesian coordinates, and the second index runs
+        over the 3 lattice vectors.
+        ''')
+
+    periodic = Quantity(
+        type=bool,
+        shape=[3],
+        description='''
+        Denotes if periodic boundary condition is applied to each of the lattice vectors.'
+        ''')
+
 
 class BravaisLattice(MSection):
     '''
@@ -90,6 +107,14 @@ class BravaisLattice(MSection):
         description='''
         Values of the Bravais lattice points used to obtain the hopping integrals. They are
         sorted from smaller to larger values of the norm.
+        ''')
+
+    formula_hill = Quantity(
+        type=str,
+        description='''
+        The chemical formula for a structure in Hill form with element symbols followed
+        by non-reduced integer chemical proportion numbers. The proportion number is
+        omitted if it is 1.
         ''')
 
 

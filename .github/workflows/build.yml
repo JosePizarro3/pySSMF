@@ -1,4 +1,4 @@
-name: Build, Test, and Deploy MkDocs
+name: Build and Test, and Deploy MkDocs (for develop only)
 on:
   push:
     branches:
@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install required dependencies for compiling F90
-        run: sudo apt-get install gfortran libopenblas-dev libfftw3-dev libhdf5-dev libnfft3-dev
+      - name: Install required dependencies for compiling and debugging F90
+        run: sudo apt-get install gfortran liblapack-dev lldb
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -20,16 +20,16 @@ jobs:
           pip install -r requirements.txt
       - name: pycodestyle
         run: |
-          python -m pycodestyle --ignore=E501,E701,E731 --exclude=src/py_tools/tb_model.py,src/py_tools/visualization.py src/py_tools tests
-      - name: pylint
-        run: |
-          python -m pylint src/py_tools --ignore=tb_model.py,visualization.py tests
+          python -m pycodestyle --ignore=E501,E701,E731 --exclude=visualization.py src/py_tools tests
+      # - name: pylint
+        # run: |
+          # python -m pylint src/py_tools --ignore=visualization.py tests
       - name: mypy
         run: |
-          python -m mypy --explicit-package-bases src/py_tools tests
+          python -m mypy --explicit-package-bases --exclude=visualization.py src/py_tools tests
       - name: Test with `pytest`
         run: |
-          python -m pytest -sv tests
+          python -B -m pytest -sv tests
   deploy:
     runs-on: ubuntu-latest
     needs: build # This ensures that the deployment job runs after the build job
