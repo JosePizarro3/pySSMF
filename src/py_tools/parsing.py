@@ -182,8 +182,8 @@ def read_input(input_filepath: str, logger: logging.Logger = None) -> dict:
         dict: dictionary of input parameters for running SSMF.
     """
     logger = logging.getLogger(__name__) if logger is None else logger
+    input_data = {}
     try:
-        input_data = {}
         with open(input_filepath, 'r') as file:
             input_data = json.load(file)
     except FileNotFoundError:
@@ -192,7 +192,6 @@ def read_input(input_filepath: str, logger: logging.Logger = None) -> dict:
         logger.error(f'Failed to decode JSON in input file {input_filepath}.')
 
     code_name = input_data.get('code', '')
-    if code_name == 'SSMF':
-        return input_data
-    else:
+    if code_name != 'SSMF':
         logger.error(f'Could not recognize the input JSON file {input_filepath} as readable by the SSMF code.')
+    return input_data
