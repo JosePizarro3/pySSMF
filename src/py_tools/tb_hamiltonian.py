@@ -15,24 +15,43 @@
 #
 
 import numpy as np
-import subprocess
+import enum
+from typing import Tuple
 
 import ase
-from ase.spacegroup import get_spacegroup
+from ase.spacegroup import get_spacegroup, spacegroup
+from ase.dft.kpoints import monkhorst_pack, BandPath
 
 from nomad.atomutils import Formula
 from nomad.units import ureg
+from . import Model
 
 
 class KSampling:
-    def __init__(self, model):
+    def __init__(self, model: Model, k_grid: list):
+        """Initializes KSampling object using the `Model()` object and the k_grid list for
+        generating the `ase.Atoms()` cell object and thus the: spacegroup, k_path, and k_mesh
+        properties.
+
+        Args:
+            model (Model): Input tight-binding model class.
+            k_grid (list): list of k_grid for generating the Monkhorst-Pack mesh, [x, y, z].
+                Default (defined in `TBHamiltonian()` is [1, 1, 1])
+        """
         if not model:
             return
         self.model = model
         self.system = model.bravais_lattice.system
         self.atoms = self.set_ase_atoms()
+        self.k_grid = k_grid
 
-    def set_ase_atoms(self):
+    def set_ase_atoms(self) ->  ase.Atoms:
+        """Sets the `ase.Atoms()` cell object. It also calculates the reciprocal_lattice_vectors
+        and the Hill formula of the system.
+
+        Returns:
+            ase.Atoms: A class of ase.Atoms filled up with the system information.
+        """
         atom_labels = self.system.labels
         pbc = self.system.periodic
         lattice_vectors = self.system.lattice_vectors.magnitude
@@ -43,7 +62,7 @@ class KSampling:
             cell=lattice_vectors,
             positions=positions
         )
-        reciprocal_lattice_vectors = atoms.get_reciprocal_cell()
+        reciprocal_lattice_vectors = 2 * np.pi * atoms.get_reciprocal_cell()
         self.system.reciprocal_lattice_vectors = reciprocal_lattice_vectors / ureg.angstrom
 
         try:
@@ -55,37 +74,86 @@ class KSampling:
         return atoms
 
     @property
-    def spacegroup(self):
+    def spacegroup(self) -> spacegroup.Spacegroup:
+        """Returns the spacegroup of the system based on the `ase.Atoms()` cell object.
+
+        Returns:
+            spacegroup.Spacegroup: A spacegroup object representing the crystallographic spacegroup.
+        """
         return get_spacegroup(self.atoms)
 
     @property
-    def k_path(self):
+    def k_path(self) -> BandPath:
+        """Returns the k-path for the system based on the `ase.Atoms()` cell object.
+
+        Returns:
+            BandPath: A BandPath object representing the k-path.
+        """
         lattice = self.atoms.cell.get_bravais_lattice()
         special_points = lattice.get_special_points()
         k_points = [list(value) for value in special_points.values()]
         return self.atoms.cell.bandpath(k_points, npoints=90)
 
+    @property
+    def k_mesh(self) -> np.ndarray:
+        """Returns the Monkhorst-Pack k-mesh for the system.
+
+        Returns:
+            np.ndarray: A np.array representing the Monkhorst-Pack k-mesh.
+        """
+        return monkhorst_pack(self.k_grid) @ self.system.reciprocal_lattice_vectors.magnitude
+
+
+class KGridType(enum.Enum):
+    BANDS = 'bands'
+    FULL_BZ = 'full_bz'
+
 
 class TBHamiltonian(KSampling):
-    def __init__(self, model):
-        super().__init__(model)
-        self.kpoints = self.k_path.cartesian_kpts()
+    def __init__(self, model: Model, k_grid_type: KGridType, k_grid: list = [1, 1, 1]):
+        """Initializes TBHamiltonian using the `Model()`, k_grid_type, and optional k_grid
+        for generating kpoints. It also calculates the Hamiltonian matrix dimensions
+        (n_k_points, n_orbitals, n_orbitals), and the number of R Bravais lattice vectors,
+        n_r_points.
+
+        Args:
+            model (Model): Input tight-binding model class.
+            k_grid_type (KGridType): Enum with the type of k-point grid ('bands' or 'full_bz').
+            k_grid (list, optional): List of k_grid for generating the Monkhorst-Pack mesh
+                for the 'full_bz' calculation. Default is [1, 1, 1].
+        """
+        if k_grid_type not in KGridType.__members__.keys():
+            raise ValueError("Invalid k_grid_type. Please, use 'bands' or 'full_bz'.")
+        super().__init__(model, k_grid)
+        self.k_grid_type = k_grid_type
+        if k_grid_type == KGridType.BANDS:
+            self.kpoints = self.k_path.cartesian_kpts()
+        elif k_grid_type == KGridType.FULL_BZ:
+            self.kpoints = self.k_mesh
         self.n_orbitals = self.model.n_orbitals
         self.n_k_points = len(self.kpoints)
         self.n_r_points = self.model.bravais_lattice.n_points
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         cls_name = self.__class__.__name__
         args = [
             f'n_orbitals={self.n_orbitals}',
             f'n_k_points={self.n_k_points}',
             f'n_r_points={self.n_r_points}',
-            f'k_path=<{self.k_path.path}>',
-            f'spacegroup=<{self.spacegroup.no}>'
+            f'k_grid_type={self.k_grid_type}',
+            f'spacegroup.no={self.spacegroup.no}'
         ]
         return f"{cls_name}({', '.join(filter(None, args))})"
 
-    def hamiltonian(self, kpoints):
+    def hamiltonian(self, kpoints: np.ndarray) -> np.ndarray:
+        """Returns the Hamiltonian matrix for given k-points.
+
+        Args:
+            kpoints (np.ndarray): Array of k-points at which to calculate the Hamiltonian.
+
+        Returns:
+            np.ndarray: The Hamiltonian matrix for the specified k-points.
+        """
         n_orbitals = self.model.n_orbitals
         n_rpoints = self.model.bravais_lattice.n_points
         onsite_energies = np.array([self.model.onsite_energies.magnitude])  # use to define same shape as hopping_matrix
@@ -94,9 +162,19 @@ class TBHamiltonian(KSampling):
             r_vector = self.model.bravais_lattice.points.magnitude[nr]
             exp_factor = np.exp(- 1j * np.pi * np.dot(kpoints, r_vector))
             hop = self.model.hopping_matrix.magnitude[nr] if nr != 0 else onsite_energies
-            hamiltonian += hop[np.newaxis, :, :] * exp_factor[:, np.newaxis, np.newaxis]
+            deg_factor = self.model.degeneracy_factors[nr]
+            hamiltonian += hop[np.newaxis, :, :] * exp_factor[:, np.newaxis, np.newaxis] / deg_factor
         return hamiltonian
 
-    def diagonalize(self, kpoints):
+    def diagonalize(self, kpoints: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """Diagonalizes the Hamiltonian matrix for given k-points and returns its eigenvectors
+        and eigenvalues.
+
+        Args:
+            kpoints (np.ndarray): Array of k-points at which to diagonalize the Hamiltonian.
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]: A tuple containing eigenvectors and eigenvalues.
+        """
         eigenvalues, eigenvectors = np.linalg.eigh(self.hamiltonian(kpoints))
         return eigenvectors, eigenvalues
