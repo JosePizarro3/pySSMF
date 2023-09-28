@@ -145,9 +145,10 @@ class TBHamiltonian(KSampling):
             f'n_orbitals={self.n_orbitals}',
             f'n_k_points={self.n_k_points}',
             f'n_r_points={self.n_r_points}',
-            f'k_grid_type={self.k_grid_type}',
-            f'spacegroup.no={self.spacegroup.no}'
+            f'k_grid_type={self.k_grid_type}'
         ]
+        if self.spacegroup:
+            args.append(f'spacegroup.no={self.spacegroup.no}')
         return f"{cls_name}({', '.join(filter(None, args))})"
 
     def hamiltonian(self, kpoints: np.ndarray) -> np.ndarray:
