@@ -45,7 +45,7 @@ class KSampling:
         self.atoms = self.set_ase_atoms()
         self.k_grid = k_grid
 
-    def set_ase_atoms(self) ->  ase.Atoms:
+    def set_ase_atoms(self) -> ase.Atoms:
         """Sets the `ase.Atoms` cell object. It also calculates the reciprocal_lattice_vectors
         and the Hill formula of the system.
 
@@ -108,6 +108,10 @@ class KGridType(enum.Enum):
     BANDS = 'bands'
     FULL_BZ = 'full_bz'
 
+    @classmethod
+    def get_values(cls):
+        return [member.value for member in cls]
+
 
 class TBHamiltonian(KSampling):
     def __init__(self, model: Model, k_grid_type: KGridType, k_grid: list = [1, 1, 1]):
@@ -122,16 +126,17 @@ class TBHamiltonian(KSampling):
             k_grid (list, optional): List of k_grid for generating the Monkhorst-Pack mesh
                 for the 'full_bz' calculation. Default is [1, 1, 1].
         """
-        if k_grid_type not in KGridType.__members__.keys():
+        if k_grid_type not in KGridType.get_values():
             raise ValueError("Invalid k_grid_type. Please, use 'bands' or 'full_bz'.")
         super().__init__(model, k_grid)
         self.k_grid_type = k_grid_type
-        if k_grid_type == KGridType.BANDS:
-            self.kpoints = self.k_path.cartesian_kpts()
-        elif k_grid_type == KGridType.FULL_BZ:
-            self.kpoints = self.k_mesh
+        kpoints = np.empty((0, 3))  # initializing for mypy
+        if k_grid_type == 'bands':
+            kpoints = self.k_path.cartesian_kpts()
+        elif k_grid_type == 'full_bz':
+            kpoints = self.k_mesh
         self.n_orbitals = self.model.n_orbitals
-        self.n_k_points = len(self.kpoints)
+        self.n_k_points = len(kpoints)
         self.n_r_points = self.model.bravais_lattice.n_points
 
     def __repr__(self) -> str:
