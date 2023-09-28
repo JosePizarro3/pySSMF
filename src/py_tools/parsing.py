@@ -120,7 +120,9 @@ class MinimalWannier90Parser():
             bravais_lattice_points_sorted = bravais_lattice_points[sorted_indices]
             bravais_lattice.points = bravais_lattice_points_sorted
             # Parse degeneracy factors
-            model.degeneracy_factors = deg_factors[2:]
+            deg_factors = deg_factors[2:]
+            deg_factors_sorted = deg_factors[sorted_indices]
+            model.degeneracy_factors = deg_factors_sorted
             model.n_orbitals = n_orbitals
             hops = wann90_hops[:, :, :, 5] + 1j * wann90_hops[:, :, :, 6]
             hops_sorted = hops[sorted_indices]
@@ -169,7 +171,7 @@ class MinimalTBStudioParser():
         self.init_parser()
 
 
-def read_input(input_filepath: str, logger: logging.Logger = None):
+def read_input(input_filepath: str, logger: logging.Logger = None) -> dict:
     """Reads the SSMF code-specific JSON input file and returns a dictionary with the read
     parameters.
 
