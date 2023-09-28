@@ -22,6 +22,11 @@ from . import Model
 
 class Pruner:
     def __init__(self, model: Model):
+        """Initializes the `Pruner` object for the `Model` object.
+
+        Args:
+            model (Model): _description_
+        """
         if not model:
             return
         self.model = model

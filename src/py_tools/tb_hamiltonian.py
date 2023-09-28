@@ -29,14 +29,14 @@ from . import Model
 
 class KSampling:
     def __init__(self, model: Model, k_grid: list):
-        """Initializes KSampling object using the `Model()` object and the k_grid list for
-        generating the `ase.Atoms()` cell object and thus the: spacegroup, k_path, and k_mesh
+        """Initializes the `KSampling` object for the `Model` object and the k_grid list to
+        generate the `ase.Atoms` cell object and thus the: spacegroup, k_path, and k_mesh
         properties.
 
         Args:
             model (Model): Input tight-binding model class.
             k_grid (list): list of k_grid for generating the Monkhorst-Pack mesh, [x, y, z].
-                Default (defined in `TBHamiltonian()` is [1, 1, 1])
+                Default (defined in `TBHamiltonian` is [1, 1, 1])
         """
         if not model:
             return
@@ -46,7 +46,7 @@ class KSampling:
         self.k_grid = k_grid
 
     def set_ase_atoms(self) ->  ase.Atoms:
-        """Sets the `ase.Atoms()` cell object. It also calculates the reciprocal_lattice_vectors
+        """Sets the `ase.Atoms` cell object. It also calculates the reciprocal_lattice_vectors
         and the Hill formula of the system.
 
         Returns:
@@ -75,7 +75,7 @@ class KSampling:
 
     @property
     def spacegroup(self) -> spacegroup.Spacegroup:
-        """Returns the spacegroup of the system based on the `ase.Atoms()` cell object.
+        """Returns the spacegroup of the system based on the `ase.Atoms` cell object.
 
         Returns:
             spacegroup.Spacegroup: A spacegroup object representing the crystallographic spacegroup.
@@ -84,7 +84,7 @@ class KSampling:
 
     @property
     def k_path(self) -> BandPath:
-        """Returns the k-path for the system based on the `ase.Atoms()` cell object.
+        """Returns the k-path for the system based on the `ase.Atoms` cell object.
 
         Returns:
             BandPath: A BandPath object representing the k-path.
@@ -111,7 +111,7 @@ class KGridType(enum.Enum):
 
 class TBHamiltonian(KSampling):
     def __init__(self, model: Model, k_grid_type: KGridType, k_grid: list = [1, 1, 1]):
-        """Initializes TBHamiltonian using the `Model()`, k_grid_type, and optional k_grid
+        """Initializes the `TBHamiltonian` object for the `Model` object, k_grid_type, and optional k_grid
         for generating kpoints. It also calculates the Hamiltonian matrix dimensions
         (n_k_points, n_orbitals, n_orbitals), and the number of R Bravais lattice vectors,
         n_r_points.
