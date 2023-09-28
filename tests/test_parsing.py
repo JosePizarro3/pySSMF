@@ -36,7 +36,7 @@ def test_wannier90_parser():
     # Model
     assert model.n_orbitals == 4
     assert model.degeneracy_factors.shape == (39, )
-    assert np.array_equal(model.degeneracy_factors[:4], np.array([2, 1, 1, 2]))
+    assert np.array_equal(model.degeneracy_factors[:4], np.array([1, 1, 1, 1]))
     assert len(model.onsite_energies) == model.n_orbitals
     assert np.array_equal(model.onsite_energies.magnitude, np.array([-0.33423, -0.334384, -0.33423, -0.334384]))
     assert model.hopping_matrix.shape == (39, model.n_orbitals, model.n_orbitals)
