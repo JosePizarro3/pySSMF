@@ -130,13 +130,13 @@ class TBHamiltonian(KSampling):
             raise ValueError("Invalid k_grid_type. Please, use 'bands' or 'full_bz'.")
         super().__init__(model, k_grid)
         self.k_grid_type = k_grid_type
-        kpoints = np.empty((0, 3))  # initializing for mypy
+        self.kpoints = np.empty((0, 3))  # initializing for mypy
         if k_grid_type == 'bands':
-            kpoints = self.k_path.cartesian_kpts()
+            self.kpoints = self.k_path.cartesian_kpts()
         elif k_grid_type == 'full_bz':
-            kpoints = self.k_mesh
+            self.kpoints = self.k_mesh
         self.n_orbitals = self.model.n_orbitals
-        self.n_k_points = len(kpoints)
+        self.n_k_points = len(self.kpoints)
         self.n_r_points = self.model.bravais_lattice.n_points
 
     def __repr__(self) -> str:
