@@ -40,13 +40,16 @@ class Runner:
             onsite_energies = self.data.get('onsite_energies')
             hoppings = self.data.get('hoppings')
             ToyModels().parse(lattice_model, onsite_energies, hoppings, self.model, self.logger)
+        else:
+            self.logger.error('Could not recognize the input tight-binding model. Please '
+                                'check your inputs.')
 
-    def prune_hoppings(self, plot_hoppings):
+    def prune_hoppings(self):
         prune_threshold = self.data.get('prune_threshold')
         if prune_threshold:
             pruner = Pruner(self.model)
             pruner.prune_by_threshold(prune_threshold, self.logger)
-            if plot_hoppings:
+            if self.data.get('plot_hoppings'):
                 plot_hopping_matrices(pruner.hopping_matrix_norms / pruner.max_value)
 
     def calculate_band_structure(self):
@@ -56,12 +59,12 @@ class Runner:
         _, eigenvalues = tb_hamiltonian.diagonalize(kpoints)
         plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
 
-    def run(self, plot_hoppings: bool = False, plot_bands: bool = False, logger: logging.Logger = None):
+    def run(self, logger: logging.Logger = None):
         self.logger = logging.getLogger(__name__) if logger is None else logger
 
         self.parse_tb_model()
 
-        self.prune_hoppings(plot_hoppings)
+        self.prune_hoppings()
 
-        if plot_bands:
+        if self.data.get('plot_bands'):
             self.calculate_band_structure()

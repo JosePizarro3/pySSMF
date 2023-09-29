@@ -95,6 +95,10 @@ class Input:
                                  '1) define `model_file` pointing to your Wannier90 `*_hr.dat` '
                                  'hoppings file, or 2) specify the `lattice_model` to study among the '
                                  f'accepted values {self._valid_lattice_models}.')
+            
+            # Plotting arguments
+            data['plot_hoppings'] = kwargs.get('plot_hoppings', False)
+            data['plot_bands'] = kwargs.get('plot_bands', False)
         self.data = data
         self.to_json()
 
