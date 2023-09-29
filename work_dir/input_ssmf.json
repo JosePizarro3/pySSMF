@@ -1,0 +1,23 @@
+{
+    "code": "SSMF",
+    "working_directory": "/home/josepizarro/SSMF/work_dir",
+    "model": "linear",
+    "hoppings": [
+        [
+            [
+                1.0,
+                0.0
+            ],
+            [
+                0.0,
+                2.0
+            ]
+        ]
+    ],
+    "onsite_energies": [
+        0.0,
+        0.0
+    ],
+    "n_hoppings": 1,
+    "n_orbitals": 2
+}

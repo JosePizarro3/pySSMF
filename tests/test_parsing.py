@@ -18,7 +18,7 @@ import pytest
 import numpy as np
 import os
 
-from src.py_tools import Model
+from src.py_tools.schema import Model
 from src.py_tools.parsing import MinimalWannier90Parser
 
 
@@ -41,10 +41,12 @@ def test_wannier90_parser():
     assert np.array_equal(model.onsite_energies.magnitude, np.array([-0.33423, -0.334384, -0.33423, -0.334384]))
     assert model.hopping_matrix.shape == (39, model.n_orbitals, model.n_orbitals)
     assert model.hopping_matrix[2][0][0].magnitude == approx(-0.004462 + 0.000147j)
+
     # Bravais lattice
     bravais_lattice = model.bravais_lattice
     assert bravais_lattice.n_points == 39
     assert np.array_equal(bravais_lattice.points[2].magnitude, np.array([12.63, 0.0, 0.0]))
+
     # System
     system = bravais_lattice.system
     assert system.labels[:4] == ['Nb', 'Nb', 'Ta', 'Ta']

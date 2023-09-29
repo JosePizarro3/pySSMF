@@ -65,13 +65,12 @@ def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_
     plt.show()
 
 
-def plot_band_structure(eigenvalues, kpoints, tb_hamiltonian, special_points=None):
+def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
     """
     Plot the band structure of a Hamiltonian.
 
     Args:
         eigenvalues (np.ndarray): Eigenvalues of the Hamiltonian matrix of shape (Nk, Norb).
-        kpoints (np.ndarray): Array of k-points with shape (Nk, 3).
         special_points (dict, optional): Dictionary of special points and their labels.
     """
 
@@ -98,7 +97,7 @@ def plot_band_structure(eigenvalues, kpoints, tb_hamiltonian, special_points=Non
                 i += 1
         plt.xticks(x_ticks, x_labels)
 
-    plt.xlim(0, len(eigenvalues))
+    plt.xlim(0, len(eigenvalues)-1)
     plt.xlabel('k-points')
     plt.ylabel('Energy')
     plt.title('Band Structure')

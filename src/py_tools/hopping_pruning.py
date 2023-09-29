@@ -17,7 +17,7 @@
 import numpy as np
 import logging
 
-from . import Model
+from .schema import Model
 
 
 class Pruner:
@@ -41,12 +41,12 @@ class Pruner:
             self.hopping_matrix_norms = np.abs(self.model.hopping_matrix.magnitude)
             self.max_value = np.max(self.hopping_matrix_norms)
 
-    def prune_by_threshold(self, threshold_factor: float = 0.03, logger: logging.Logger = None):
+    def prune_by_threshold(self, threshold_factor: float, logger: logging.Logger = None):
         """Prune the model's hopping_matrix based on a threshold.
 
         Args:
             threshold_factor (float, optional): Percentage of the max_value to determine
-                the pruning threshold. Defaults to 3% of the max_value.
+                the pruning threshold. Defaults to 1% of the max_value (defined in input reading).
         """
         logger = logging.getLogger(__name__) if logger is None else logger
         # TODO improve this method. Right now it is assuming that hoppings are ordered from

@@ -19,17 +19,20 @@ from src.py_tools.hopping_pruning import Pruner
 
 
 def test_pruner(example_model):
+    '''Tests whether the Pruner properly prunes a hopping_matrix quantity.'''
     pruner = Pruner(example_model)
+
     # Initialization
     assert pruner.model == example_model
     assert pruner.max_value == 0.6
-    # Pruning by default threshold (0.05)
-    pruner.prune_by_threshold()
+
+    # Pruning by input threshold
+    pruner.prune_by_threshold(0.05)
     assert example_model.bravais_lattice.n_points == 3
     assert example_model.hopping_matrix.shape[0] == 3
     assert example_model.degeneracy_factors.shape[0] == 3
     assert np.array_equal(example_model.bravais_lattice.points[-1].magnitude, np.array([0.2, 0.2, 0.2]))
-    # Pruning by an input threshold
+
     pruner = Pruner(example_model)
     pruner.prune_by_threshold(0.15)
     assert example_model.bravais_lattice.n_points == 1
