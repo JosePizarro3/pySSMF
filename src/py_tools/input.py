@@ -76,7 +76,7 @@ class Input:
                 n_hoppings = len(hoppings)
                 if n_hoppings > 3:
                     raise ValueError('Maximum n_hoppings models supported is 3. Please, select '
-                                    'a smaller number')
+                                     'a smaller number')
                 n_orbitals = len(hoppings[0])
                 # We check shape for all R point to be (n_orbitals, n_orbitals)
                 if not all(np.shape(hop_point) == (n_orbitals, n_orbitals) for hop_point in hoppings):
@@ -92,9 +92,9 @@ class Input:
                 data['n_orbitals'] = n_orbitals
             else:
                 raise ValueError('Could not find the initial model. Please, check your inputs: '
-                                '1) define `model_file` pointing to your Wannier90 `*_hr.dat` '
-                                'hoppings file, or 2) specify the `lattice_model` to study among the '
-                                f'accepted values {self._valid_lattice_models}.')
+                                 '1) define `model_file` pointing to your Wannier90 `*_hr.dat` '
+                                 'hoppings file, or 2) specify the `lattice_model` to study among the '
+                                 f'accepted values {self._valid_lattice_models}.')
         self.data = data
         self.to_json()
 

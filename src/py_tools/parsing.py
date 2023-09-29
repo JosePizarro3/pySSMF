@@ -166,7 +166,7 @@ class MinimalTBStudioParser():
     def init_parser(self):
         pass
 
-    def parse(self, filepath: str, model: Model, logger: logging.Logger = None):  
+    def parse(self, filepath: str, model: Model, logger: logging.Logger = None):
         # TODO implement this parsing with the help of @MohamadNakhaee
         self.filepath = filepath
         self.model = model

@@ -17,7 +17,7 @@
 import pytest
 import numpy as np
 
-from src.py_tools import System, BravaisLattice, Model
+from src.py_tools.schema import System, BravaisLattice, Model
 
 
 def get_template_system():
