@@ -161,7 +161,7 @@ class TBHamiltonian(KSampling):
             r_vector = self.model.bravais_lattice.points.magnitude[nr]
             exp_factor = np.exp(- 1j * np.pi * np.dot(kpoints, r_vector))
             hop = self.model.hopping_matrix.magnitude[nr] if nr != 0 else onsite_energies
-            deg_factor = self.model.degeneracy_factors[nr]
+            deg_factor = self.model.degeneracy_factors[nr] if self.model.degeneracy_factors is not None else 1
             hamiltonian += hop[np.newaxis, :, :] * exp_factor[:, np.newaxis, np.newaxis] / deg_factor
         return hamiltonian
 
