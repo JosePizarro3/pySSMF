@@ -52,7 +52,8 @@ class Runner:
     def calculate_band_structure(self):
         tb_hamiltonian = TBHamiltonian(self.model, k_grid_type='bands')
         special_points = tb_hamiltonian.k_path.special_points
-        _, eigenvalues = tb_hamiltonian.diagonalize(tb_hamiltonian.kpoints)
+        kpoints = tb_hamiltonian.kpoints
+        _, eigenvalues = tb_hamiltonian.diagonalize(kpoints)
         plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
 
     def run(self, plot_hoppings: bool = False, plot_bands: bool = False, logger: logging.Logger = None):
