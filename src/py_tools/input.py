@@ -14,13 +14,28 @@
 # limitations under the License.
 #
 
+from abc import ABC
+import logging
 import json
 import os
 import numpy as np
 
 
-class Input:
-    def __init__(self, logger, **kwargs):
+class ValidLatticeModels(ABC):
+    """Abstract class that defines the valid lattice models covered in this code by specific strings."""
+
+    def __init__(self, logger: logging.Logger = logging.getLogger(__name__)):
+        self.logger = logger
+        self._valid_lattice_models = [
+            "linear",
+            "square",
+            "honeycomb",
+            "triangular",
+        ]  # TODO extend this
+
+
+class Input(ValidLatticeModels):
+    def __init__(self, **kwargs):
         """Reads the input arguments and stores then in self.data in a JSON file generated
         in the working_directory.
             - 'logger': the logger where the errors, warnings, etc. will be printed.
@@ -46,15 +61,7 @@ class Input:
         Then, it stores the input parameters in a JSON in the working directory with the name
         'input_ssmf.json'.
         """
-
-        self.logger = logger
-        self._valid_lattice_models = [
-            "linear",
-            "square",
-            "honeycomb",
-            "triangular",
-        ]  # TODO extend this
-
+        super().__init__()
         # Initializing data
         data = {"code": "SSMF"}
 
@@ -103,9 +110,10 @@ class Input:
                     np.shape(hop_point) == (n_orbitals, n_orbitals)
                     for hop_point in hoppings
                 ):
-                    raise ValueError(
-                        "Dimensions of each hopping matrix do not coincide with "
-                        f"({n_orbitals}, {n_orbitals})."
+                    self.logger.error(
+                        "Dimensions of each hopping matrix do not coincide with"
+                        "(n_orbitals, n_orbitals).",
+                        data={"n_orbitals": n_orbitals},
                     )
                 # TODO improve this
                 onsite_energies = kwargs.get("onsite_energies", [])
