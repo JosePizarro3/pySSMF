@@ -6,17 +6,7 @@
     ],
     "editor.renderWhitespace": "all",
     "editor.tabSize": 4,
-    "python.linting.pylintArgs": [
-        "--rcfile=${workspaceFolder}/.pylintrc"
-    ],
-    "python.linting.pycodestylePath": "pycodestyle",
-    "python.linting.pycodestyleArgs": [
-        "--config=${workspaceFolder}/pycodestyle.ini"
-    ],
-    "python.linting.mypyArgs": [
-        "--ignore-missing-imports",
-        "--follow-imports=silent",
-        "--no-strict-optional"
-    ]
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
 }
 
