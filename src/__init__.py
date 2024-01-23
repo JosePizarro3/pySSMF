@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-# from .input import Input, ValidLatticeModels
-# from .runner import Runner
+from .input import Input, ValidLatticeModels
+from .runner import Runner

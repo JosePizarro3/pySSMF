@@ -153,15 +153,19 @@ class Input(ValidLatticeModels):
             with open(input_file, "r") as file:
                 input_data = json.load(file)
         except FileNotFoundError:
-            self.logger.error("Input file not found.", data={"input_file": input_file})
+            self.logger.error(
+                "Input file not found.",
+                extra={"input_file": input_file},
+            )
         except json.JSONDecodeError:
             self.logger.error(
-                "Failed to decode JSON in input file.", data={"input_file": input_file}
+                "Failed to decode JSON in input file.",
+                extra={"input_file": input_file},
             )
         code_name = input_data.get("code", "")
         if code_name != "SSMF":
             self.logger.error(
                 "Could not recognize the input JSON file as readable by the SSMF code.",
-                data={"input_file": input_file},
+                extra={"input_file": input_file},
             )
         return input_data
