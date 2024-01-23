@@ -19,5 +19,13 @@
         0.0
     ],
     "n_hoppings": 1,
-    "n_orbitals": 2
+    "n_orbitals": 2,
+    "n_k_path": 90,
+    "k_grid": [
+        6,
+        1,
+        1
+    ],
+    "plot_hoppings": false,
+    "plot_bands": true
 }
