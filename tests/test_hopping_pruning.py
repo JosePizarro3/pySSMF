@@ -15,11 +15,11 @@
 #
 
 import numpy as np
-from src.py_tools.hopping_pruning import Pruner
+from src.hopping_pruning import Pruner
 
 
 def test_pruner(example_model):
-    '''Tests whether the Pruner properly prunes a hopping_matrix quantity.'''
+    """Tests whether the Pruner properly prunes a hopping_matrix quantity."""
     pruner = Pruner(example_model)
 
     # Initialization
@@ -31,11 +31,15 @@ def test_pruner(example_model):
     assert example_model.bravais_lattice.n_points == 3
     assert example_model.hopping_matrix.shape[0] == 3
     assert example_model.degeneracy_factors.shape[0] == 3
-    assert np.array_equal(example_model.bravais_lattice.points[-1].magnitude, np.array([0.2, 0.2, 0.2]))
+    assert np.array_equal(
+        example_model.bravais_lattice.points[-1].magnitude, np.array([0.2, 0.2, 0.2])
+    )
 
     pruner = Pruner(example_model)
     pruner.prune_by_threshold(0.15)
     assert example_model.bravais_lattice.n_points == 1
     assert example_model.hopping_matrix.shape[0] == 1
     assert example_model.degeneracy_factors.shape[0] == 1
-    assert np.array_equal(example_model.bravais_lattice.points[-1].magnitude, np.array([0.0, 0.0, 0.0]))
+    assert np.array_equal(
+        example_model.bravais_lattice.points[-1].magnitude, np.array([0.0, 0.0, 0.0])
+    )
