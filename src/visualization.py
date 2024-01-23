@@ -16,12 +16,15 @@
 
 import numpy as np
 import matplotlib
-matplotlib.use('Qt5Agg')
+
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
 
-def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_count: int = 4):
+def plot_hopping_matrices(
+    matrices: np.ndarray, max_value: float = 1.0, display_count: int = 4
+):
     """
     Plot the matrices with a slider to scroll through number of Bravais points ($N_R$).
 
@@ -33,7 +36,9 @@ def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_
 
     total_matrices = matrices.shape[0]
 
-    fig, axes = plt.subplots(nrows=1, ncols=display_count, figsize=(display_count*3, 3))
+    fig, axes = plt.subplots(
+        nrows=1, ncols=display_count, figsize=(display_count * 3, 3)
+    )
     if display_count == 1:
         axes = [axes]
 
@@ -43,15 +48,22 @@ def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_
         for i, ax in enumerate(axes):
             ax.clear()
             if idx + i < total_matrices:
-                ax.imshow(matrices[idx + i], cmap='inferno', vmin=0, vmax=max_value)
-                ax.set_title(f'$N_R$ = {idx + i}')
-            ax.axis('off')
+                ax.imshow(matrices[idx + i], cmap="inferno", vmin=0, vmax=max_value)
+                ax.set_title(f"$N_R$ = {idx + i}")
+            ax.axis("off")
 
         fig.canvas.draw_idle()
 
     # Create the slider
-    ax_slider = plt.axes([0.2, 0.01, 0.65, 0.03], facecolor='lightgoldenrodyellow')
-    slider = Slider(ax_slider, 'Start $N_R$', 0, total_matrices - display_count, valinit=0, valstep=1)
+    ax_slider = plt.axes([0.2, 0.01, 0.65, 0.03], facecolor="lightgoldenrodyellow")
+    slider = Slider(
+        ax_slider,
+        "Start $N_R$",
+        0,
+        total_matrices - display_count,
+        valinit=0,
+        valstep=1,
+    )
     slider.on_changed(update)
 
     # Initial plot
@@ -59,9 +71,16 @@ def plot_hopping_matrices(matrices: np.ndarray, max_value: float = 1.0, display_
 
     # Add a colorbar to the figure, adjust the position for better spacing
     cbar_ax = fig.add_axes([0.93, 0.15, 0.02, 0.7])
-    fig.colorbar(plt.cm.ScalarMappable(cmap='inferno', norm=plt.Normalize(vmin=0, vmax=max_value)), cax=cbar_ax)
+    fig.colorbar(
+        plt.cm.ScalarMappable(
+            cmap="inferno", norm=plt.Normalize(vmin=0, vmax=max_value)
+        ),
+        cax=cbar_ax,
+    )
 
-    plt.tight_layout(rect=[0, 0.05, 0.9, 1])  # Adjust the right bound to 0.9 to provide space for the colorbar
+    plt.tight_layout(
+        rect=[0, 0.05, 0.9, 1]
+    )  # Adjust the right bound to 0.9 to provide space for the colorbar
     plt.show()
 
 
@@ -81,26 +100,32 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
 
     # Iterate over eigenvalues for each band
     for band_idx in range(num_bands):
-        plt.plot(np.arange(len(eigenvalues)), eigenvalues[:, band_idx], label=f'Band {band_idx + 1}')
+        plt.plot(
+            np.arange(len(eigenvalues)),
+            eigenvalues[:, band_idx],
+            label=f"Band {band_idx + 1}",
+        )
 
     # Customize x-axis labeling based on special points
     if special_points is not None:
-        x_labels = [''] * (len(special_points))  # Initialize labels with empty strings
+        x_labels = [""] * (len(special_points))  # Initialize labels with empty strings
         x_ticks = []
 
         i = 0
         for key, val in special_points.items():
             if np.where(np.all(val == tb_hamiltonian.k_path.kpts, axis=1))[0].size > 0:
-                index = np.where(np.all(val == tb_hamiltonian.k_path.kpts, axis=1))[0][0]
+                index = np.where(np.all(val == tb_hamiltonian.k_path.kpts, axis=1))[0][
+                    0
+                ]
                 x_labels[i] = key
                 x_ticks.append(index)
                 i += 1
         plt.xticks(x_ticks, x_labels)
 
-    plt.xlim(0, len(eigenvalues)-1)
-    plt.xlabel('k-points')
-    plt.ylabel('Energy')
-    plt.title('Band Structure')
+    plt.xlim(0, len(eigenvalues) - 1)
+    plt.xlabel("k-points")
+    plt.ylabel("Energy")
+    plt.title("Band Structure")
     plt.legend()
     plt.grid(True)
 
