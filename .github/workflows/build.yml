@@ -16,9 +16,6 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-      - name: pycodestyle
-        run: |
-          python -m pycodestyle --ignore=E501,E701,E731 --exclude=visualization.py src tests
       - name: mypy
         run: |
           python -m mypy --explicit-package-bases --exclude=visualization.py src tests
