@@ -36,7 +36,8 @@ class ValidLatticeModels(ABC):
 
 class Input(ValidLatticeModels):
     def __init__(self, **kwargs):
-        """Reads the input arguments and stores then in self.data in a JSON file generated
+        """
+        Reads the input arguments and stores then in self.data in a JSON file generated
         in the working_directory.
             - 'logger': the logger where the errors, warnings, etc. will be printed.
             - 'code': 'SSMF'.
@@ -149,10 +150,22 @@ class Input(ValidLatticeModels):
         self.to_json()
 
     def to_json(self):
+        """
+        Stores the input data in a JSON file in the working_directory.
+        """
         with open(f"{self.data.get('working_directory')}/input_ssmf.json", "w") as file:
             json.dump(self.data, file, indent=4)
 
-    def read_from_file(self, input_file: str):
+    def read_from_file(self, input_file: str) -> dict:
+        """
+        Reads the input data from a JSON file provided it is a SSMF code input file.
+
+        Args:
+            input_file (str): path to the input JSON file in the working directory.
+
+        Returns:
+            (dict): dictionary with the input data read from the JSON input file.
+        """
         try:
             with open(input_file, "r") as file:
                 input_data = json.load(file)

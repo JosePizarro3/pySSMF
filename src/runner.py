@@ -27,6 +27,11 @@ from .visualization import plot_hopping_matrices, plot_band_structure, plot_dos
 
 
 class Runner(ValidLatticeModels):
+    """
+    Class that runs the calculation. It reads the input data from the input file and
+    runs the SSMF calculation.
+    """
+
     def __init__(self, **kwargs):
         super().__init__()
         self.data = kwargs.get("data", {})
@@ -34,6 +39,10 @@ class Runner(ValidLatticeModels):
         self.model = Model()
 
     def parse_tb_model(self):
+        """
+        Parses the tight-binding model from the input file. It can be obtained from a Wannier90
+        tight-binding calculation or a toy lattice model.
+        """
         lattice_model = self.data.get("tb_model", "")
         if "_hr.dat" in lattice_model:
             model_file = os.path.join(self.data.get("working_directory"), lattice_model)
@@ -51,6 +60,9 @@ class Runner(ValidLatticeModels):
             )
 
     def prune_hoppings(self):
+        """
+        Prunes the hopping matrices by setting to zero all values below a certain `prune_threshold`.
+        """
         prune_threshold = self.data.get("prune_threshold")
         if prune_threshold:
             pruner = Pruner(self.model)
@@ -59,6 +71,9 @@ class Runner(ValidLatticeModels):
                 plot_hopping_matrices(pruner.hopping_matrix_norms / pruner.max_value)
 
     def calculate_band_structure(self):
+        """
+        Calculates the band structure of the tight-binding model in a given `n_k_path`.
+        """
         n_k_path = self.data.get("n_k_path", 90)
         tb_hamiltonian = TBHamiltonian(
             self.model, k_grid_type="bands", n_k_path=n_k_path
@@ -81,9 +96,12 @@ class Runner(ValidLatticeModels):
         to resolve better the Gaussians.
 
         Args:
-            data (np.array): array containing the data read from the pdos file. Dimensions are (n_energies, n_columns)
-            width (float): standard deviation or width of the Gaussian distribution.
-            delta_energy (float): the spacing of the new energies mesh.
+            energies (np.array): array containing the energies. Dimensions are (n_energies).
+            orbital_dos_histogram (np.array): array containing the orbital DOS histogram. Dimensions
+                are (n_energies, n_orbitals).
+            width (float): standard deviation or width of the Gaussian distribution. Defaults to
+                0.1 eV.
+            delta_energy (float): the spacing of the new energies mesh. Defaults to 0.01 eV.
 
         Returns:
             new_energies, convoluted_data: returns the new X and Y data for the convoluted data.
@@ -106,12 +124,30 @@ class Runner(ValidLatticeModels):
 
     def calculate_dos(
         self,
-        eigenvalues,
-        eigenvectors,
+        eigenvalues: np.ndarray,
+        eigenvectors: np.ndarray,
         bins: int = 100,
         width: float = 0.1,
         delta_energy: float = 0.01,
     ):
+        """
+        Calculates the orbital and total DOS from the eigenvalues and eigenvectors of the
+        tight-binding model.
+
+        Args:
+            eigenvalues (np.ndarray): the eigenvalues of the tight-binding model. Dimensions are
+                (n_kpoints, n_orbitals).
+            eigenvectors (np.ndarray): the eigenvectors of the tight-binding model. Dimensions are
+                (n_kpoints, n_orbitals, n_orbitals).
+            bins (int, optional): the number of bins for the histogram. Defaults to 100.
+            width (float, optional): the width of the Gaussian distribution function. Defaults to
+                0.1 eV.
+            delta_energy (float, optional): the spacing of the new energies mesh. Defaults to
+                0.01 eV.
+
+        Returns:
+            energies, orbital_dos, total_dos: the energies mesh, the orbital DOS, and the total DOS.
+        """
         # We create the orbital DOS histogram and append all orbital contributions together
         orbital_dos_histogram = []
         for orbital in range(self.model.n_orbitals):
@@ -133,6 +169,10 @@ class Runner(ValidLatticeModels):
         return energies, orbital_dos, total_dos
 
     def bz_diagonalization(self):
+        """
+        Diagonalizes the tight-binding model in the full Brillouin zone and returns its
+        eigenvalues and eigenvectors.
+        """
         k_grid = self.data.get("k_grid", [1, 1, 1])
         tb_hamiltonian = TBHamiltonian(self.model, k_grid_type="full_bz", k_grid=k_grid)
         kpoints = tb_hamiltonian.kpoints
