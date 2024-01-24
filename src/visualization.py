@@ -15,9 +15,8 @@
 #
 
 import numpy as np
-import matplotlib
+import PyQt5  # noqa: F401
 
-matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
