@@ -30,7 +30,8 @@ re_n = r"[\n\r]"
 
 
 class WOutParser(TextParser):
-    """Parses the text from the `*.wout` Wannier90 file. It finds (using regex) the values
+    """
+    Parses the text from the `*.wout` Wannier90 file. It finds (using regex) the values
     for the atomic structure.
     """
 
@@ -59,7 +60,8 @@ class WOutParser(TextParser):
 
 
 class HrParser(TextParser):
-    """Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors
+    """
+    Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors
     at the begining of the file and the list of hoppings.
     """
 
@@ -79,14 +81,17 @@ class MinimalWannier90Parser:
         self.hr_parser = HrParser()
 
     def init_parser(self):
-        """Initializes the parser attributes."""
+        """
+        Initializes the parser attributes.
+        """
         self.wout_parser.mainfile = self.mainfile
         self.wout_parser.logger = self.logger
         self.hr_parser.mainfile = self.filepath
         self.hr_parser.logger = self.logger
 
     def parse_system(self):
-        """Parses the system metadata.
+        """
+        Parses the system metadata.
 
         Args:
             model (Model): section Model to store the system information.
@@ -108,7 +113,8 @@ class MinimalWannier90Parser:
             sec_system.positions = structure.get("positions") * ureg.angstrom
 
     def parse_hoppings(self):
-        """Parses the hoppings metadata.
+        """
+        Parses the hoppings metadata.
 
         Args:
             model (Model): section Model to store the hoppings information.
@@ -148,7 +154,8 @@ class MinimalWannier90Parser:
             self.model.hopping_matrix = hops_sorted * ureg.eV
 
     def parse(self, filepath: str, model: Model, logger: logging.Logger = None):
-        """Parses the system, Bravais lattice and hoppings information and stores it in the
+        """
+        Parses the system, Bravais lattice and hoppings information and stores it in the
         section Model.
 
         Args:

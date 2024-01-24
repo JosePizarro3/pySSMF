@@ -22,7 +22,8 @@ from .schema import Model
 
 class Pruner:
     def __init__(self, model: Model):
-        """Initializes the `Pruner` object for the `Model` object.
+        """
+        Initializes the `Pruner` object for the `Model` object.
 
         Args:
             model (Model): _description_
@@ -35,7 +36,9 @@ class Pruner:
         self.update_norms_and_max_value()
 
     def update_norms_and_max_value(self):
-        """Stores the hopping_matrix norms and their maximum value."""
+        """
+        Stores the hopping_matrix norms and their maximum value.
+        """
         if self.model.hopping_matrix is not None:
             self.hopping_matrix_norms = np.abs(self.model.hopping_matrix.magnitude)
             self.max_value = np.max(self.hopping_matrix_norms)
@@ -43,7 +46,8 @@ class Pruner:
     def prune_by_threshold(
         self, threshold_factor: float, logger: logging.Logger = None
     ):
-        """Prune the model's hopping_matrix based on a threshold.
+        """
+        Prune the model's hopping_matrix based on a threshold.
 
         Args:
             threshold_factor (float, optional): Percentage of the max_value to determine

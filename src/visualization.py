@@ -130,3 +130,18 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
     plt.grid(True)
 
     plt.show()
+
+
+def plot_dos(center, orbital_dos, total_dos):
+    # Create a figure
+    plt.figure(figsize=(8, 6))
+    plt.plot(center, total_dos, label="Total DOS")
+
+    # Plot orbital-resolved DOS
+    for i, orb_dos in enumerate(orbital_dos):
+        plt.plot(center, orb_dos, label=f"Orbital {i + 1}")
+
+    plt.xlabel("Energy")
+    plt.ylabel("Density of States (DOS)")
+    plt.legend()
+    plt.show()

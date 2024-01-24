@@ -28,7 +28,8 @@ from .schema import Model
 
 class KSampling:
     def __init__(self, model: Model, n_k_path: int, k_grid: list):
-        """Initializes the `KSampling` object for the `Model` object and the k_grid list to
+        """
+        Initializes the `KSampling` object for the `Model` object and the k_grid list to
         generate the `ase.Atoms` cell object and thus the: spacegroup, k_path, and k_mesh
         properties.
 
@@ -46,7 +47,8 @@ class KSampling:
         self.k_grid = k_grid
 
     def set_ase_atoms(self) -> ase.Atoms:
-        """Sets the `ase.Atoms` cell object. It also calculates the reciprocal_lattice_vectors
+        """
+        Sets the `ase.Atoms` cell object. It also calculates the reciprocal_lattice_vectors
         and the Hill formula of the system.
 
         Returns:
@@ -74,7 +76,8 @@ class KSampling:
 
     @property
     def spacegroup(self) -> spacegroup.Spacegroup:
-        """Returns the spacegroup of the system based on the `ase.Atoms` cell object.
+        """
+        Returns the spacegroup of the system based on the `ase.Atoms` cell object.
 
         Returns:
             spacegroup.Spacegroup: A spacegroup object representing the crystallographic spacegroup.
@@ -83,7 +86,8 @@ class KSampling:
 
     @property
     def k_path(self) -> BandPath:
-        """Returns the k-path for the system based on the `ase.Atoms` cell object.
+        """
+        Returns the k-path for the system based on the `ase.Atoms` cell object.
 
         Returns:
             BandPath: A BandPath object representing the k-path.
@@ -95,7 +99,8 @@ class KSampling:
 
     @property
     def k_mesh(self) -> np.ndarray:
-        """Returns the Monkhorst-Pack k-mesh for the system.
+        """
+        Returns the Monkhorst-Pack k-mesh for the system.
 
         Returns:
             np.ndarray: A np.array representing the Monkhorst-Pack k-mesh.
@@ -116,7 +121,8 @@ class TBHamiltonian(KSampling):
         n_k_path: int = 90,
         k_grid: list = [1, 1, 1],
     ):
-        """Initializes the `TBHamiltonian` object for the `Model` object, k_grid_type, and optional k_grid
+        """
+        Initializes the `TBHamiltonian` object for the `Model` object, k_grid_type, and optional k_grid
         for generating kpoints. It also calculates the Hamiltonian matrix dimensions
         (n_k_points, n_orbitals, n_orbitals), and the number of R Bravais lattice vectors,
         n_r_points.
@@ -133,9 +139,9 @@ class TBHamiltonian(KSampling):
         self.k_grid_type = k_grid_type
         self.kpoints = np.empty((0, 3))  # initializing for mypy
         if k_grid_type == "bands":
-            self.kpoints = self.k_path.cartesian_kpts()
+            self.kpoints = 2 * np.pi * self.k_path.cartesian_kpts()
         elif k_grid_type == "full_bz":
-            self.kpoints = self.k_mesh
+            self.kpoints = 2 * np.pi * self.k_mesh
         self.n_orbitals = self.model.n_orbitals
         self.n_k_points = len(self.kpoints)
         self.n_r_points = self.model.bravais_lattice.n_points
@@ -153,7 +159,8 @@ class TBHamiltonian(KSampling):
         return f"{cls_name}({', '.join(filter(None, args))})"
 
     def hamiltonian(self, kpoints: np.ndarray) -> np.ndarray:
-        """Returns the Hamiltonian matrix for given k-points.
+        """
+        Returns the Hamiltonian matrix for given k-points.
 
         Args:
             kpoints (np.ndarray): Array of k-points at which to calculate the Hamiltonian.
@@ -169,7 +176,7 @@ class TBHamiltonian(KSampling):
         hamiltonian = np.zeros((len(kpoints), n_orbitals, n_orbitals), dtype=complex)
         for nr in range(n_rpoints):
             r_vector = self.model.bravais_lattice.points.magnitude[nr]
-            exp_factor = np.exp(-1j * np.pi * np.dot(kpoints, r_vector))
+            exp_factor = np.exp(-1j * np.dot(kpoints, r_vector))
             hop = (
                 self.model.hopping_matrix.magnitude[nr] if nr != 0 else onsite_energies
             )
@@ -186,7 +193,8 @@ class TBHamiltonian(KSampling):
         return hamiltonian
 
     def diagonalize(self, kpoints: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        """Diagonalizes the Hamiltonian matrix for given k-points and returns its eigenvectors
+        """
+        Diagonalizes the Hamiltonian matrix for given k-points and returns its eigenvectors
         and eigenvalues.
 
         Args:
@@ -195,5 +203,4 @@ class TBHamiltonian(KSampling):
         Returns:
             Tuple[np.ndarray, np.ndarray]: A tuple containing eigenvectors and eigenvalues.
         """
-        eigenvalues, eigenvectors = np.linalg.eigh(self.hamiltonian(kpoints))
-        return eigenvectors, eigenvalues
+        return np.linalg.eigh(self.hamiltonian(kpoints))
