@@ -26,7 +26,7 @@ class Pruner:
         Initializes the `Pruner` object for the `Model` object.
 
         Args:
-            model (Model): _description_
+            model (Model): (Tight-binding) Model object to be pruned.
         """
         if not model:
             return
@@ -52,13 +52,14 @@ class Pruner:
         Args:
             threshold_factor (float, optional): Percentage of the max_value to determine
                 the pruning threshold. Defaults to 1% of the max_value (defined in input reading).
+            logger (logging.Logger, optional): Logger object for debug messages. Defaults to None.
         """
-        logger = logging.getLogger(__name__) if logger is None else logger
+        self.logger = logging.getLogger(__name__) if logger is None else logger
         # TODO improve this method. Right now it is assuming that hoppings are ordered from
         # larger to smaller values as far as the Bravais norm increases. This might give
         # problems for hoppings structures which are not so trivial.
         if not self.max_value and not self.hopping_matrix_norms:
-            logger.warning(
+            self.logger.warning(
                 "Could not extract the hopping_matrix norms and their max_value."
             )
             return
@@ -86,6 +87,8 @@ class Pruner:
                     :last_small_index
                 ]
             except Exception:
-                logger.warning("Could not update the model parameters after pruning.")
+                self.logger.warning(
+                    "Could not update the model parameters after pruning."
+                )
 
         self.update_norms_and_max_value()

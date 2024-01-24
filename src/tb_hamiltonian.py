@@ -15,7 +15,6 @@
 #
 
 import numpy as np
-from typing import Tuple
 
 import ase
 from ase.spacegroup import get_spacegroup, spacegroup
@@ -192,7 +191,7 @@ class TBHamiltonian(KSampling):
             )
         return hamiltonian
 
-    def diagonalize(self, kpoints: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def diagonalize(self, kpoints: np.ndarray):
         """
         Diagonalizes the Hamiltonian matrix for given k-points and returns its eigenvectors
         and eigenvalues.
@@ -201,6 +200,6 @@ class TBHamiltonian(KSampling):
             kpoints (np.ndarray): Array of k-points at which to diagonalize the Hamiltonian.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: A tuple containing eigenvalues and eigenvectors.
+            tuple(np.ndarray, np.ndarray): A tuple containing eigenvalues and eigenvectors.
         """
         return np.linalg.eigh(self.hamiltonian(kpoints))

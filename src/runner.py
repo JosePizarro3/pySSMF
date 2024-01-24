@@ -85,8 +85,8 @@ class Runner(ValidLatticeModels):
 
     def gaussian_convolution(
         self,
-        energies: np.ndarray,
-        orbital_dos_histogram: np.ndarray,
+        energies,
+        orbital_dos_histogram,
         width: float = 0.1,
         delta_energy: float = 0.01,
     ):
@@ -124,8 +124,8 @@ class Runner(ValidLatticeModels):
 
     def calculate_dos(
         self,
-        eigenvalues: np.ndarray,
-        eigenvectors: np.ndarray,
+        eigenvalues,
+        eigenvectors,
         bins: int = 100,
         width: float = 0.1,
         delta_energy: float = 0.01,
@@ -159,10 +159,13 @@ class Runner(ValidLatticeModels):
             )
             energies = (bin_edges[:-1] + bin_edges[1:]) / 2
             orbital_dos_histogram.append(orbital_dos_contribution_histogram)
-        orbital_dos_histogram = np.array(orbital_dos_histogram).T
+        if not orbital_dos_histogram:
+            self.logger.warning(
+                "Problem obtaining the orbital DOS histogram. Cannot resolve DOS."
+            )
         # We convolute the histogram to obtain a smoother orbital DOS
         energies, orbital_dos = self.gaussian_convolution(
-            energies, orbital_dos_histogram, width, delta_energy
+            energies, np.array(orbital_dos_histogram).T, width, delta_energy
         )
         # We sum all orbital contributions to obtain the total DOS
         total_dos = np.sum(orbital_dos, axis=0)

@@ -91,10 +91,7 @@ class MinimalWannier90Parser:
 
     def parse_system(self):
         """
-        Parses the system metadata.
-
-        Args:
-            model (Model): section Model to store the system information.
+        Parses the system metadata and stores it under `Model`.
         """
         sec_system = self.model.m_create(BravaisLattice).m_create(System)
 
@@ -114,10 +111,7 @@ class MinimalWannier90Parser:
 
     def parse_hoppings(self):
         """
-        Parses the hoppings metadata.
-
-        Args:
-            model (Model): section Model to store the hoppings information.
+        Parses the hoppings metadata and stores them under `Model`.
         """
         bravais_lattice = self.model.bravais_lattice
 
@@ -161,6 +155,7 @@ class MinimalWannier90Parser:
         Args:
             filepath (str): path to the file `*_hr.dat` to be parsed.
             model (Model): section Model to store metadata.
+            logger (logging.Logger, optional): Logger object for debug messages. Defaults to None.
         """
         basename = os.path.basename(filepath)  # Getting filepath for *_hr.dat file
         wout_files = get_files("*.wout", filepath, basename)
