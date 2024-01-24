@@ -27,5 +27,6 @@
         1
     ],
     "plot_hoppings": false,
-    "plot_bands": true
+    "plot_bands": true,
+    "dos": true
 }

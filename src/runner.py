@@ -65,7 +65,7 @@ class Runner(ValidLatticeModels):
         )
         special_points = tb_hamiltonian.k_path.special_points
         kpoints = tb_hamiltonian.kpoints
-        _, eigenvalues = tb_hamiltonian.diagonalize(kpoints)
+        eigenvalues, _ = tb_hamiltonian.diagonalize(kpoints)
         plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
 
     def gaussian_convolution(
@@ -106,8 +106,8 @@ class Runner(ValidLatticeModels):
 
     def calculate_dos(
         self,
-        eigenvectors,
         eigenvalues,
+        eigenvectors,
         bins: int = 100,
         width: float = 0.1,
         delta_energy: float = 0.01,
@@ -136,14 +136,19 @@ class Runner(ValidLatticeModels):
         k_grid = self.data.get("k_grid", [1, 1, 1])
         tb_hamiltonian = TBHamiltonian(self.model, k_grid_type="full_bz", k_grid=k_grid)
         kpoints = tb_hamiltonian.kpoints
-        eigenvectors, eigenvalues = tb_hamiltonian.diagonalize(kpoints)
+        eigenvalues, eigenvectors = tb_hamiltonian.diagonalize(kpoints)
 
         # Calculating and plotting DOS
-        bins = int(np.linalg.norm(k_grid))
-        energies, orbital_dos, total_dos = self.calculate_dos(
-            eigenvectors, eigenvalues, bins
-        )
-        plot_dos(energies, orbital_dos, total_dos)
+        if self.data.get("dos"):
+            bins = int(np.linalg.norm(k_grid))
+            width = self.data.get("dos_gaussian_width")
+            delta_energy = self.data.get("dos_delta_energy")
+            energies, orbital_dos, total_dos = self.calculate_dos(
+                eigenvalues, eigenvectors, bins, width, delta_energy
+            )
+            plot_dos(energies, orbital_dos, total_dos)
+
+        return eigenvalues, eigenvectors
 
     def run(self):
         self.parse_tb_model()
@@ -154,3 +159,4 @@ class Runner(ValidLatticeModels):
             self.calculate_band_structure()
 
         self.bz_diagonalization()
+        self.logger.info("BZ diagonalizatio finished")

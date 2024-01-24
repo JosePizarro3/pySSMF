@@ -26,7 +26,7 @@ def plot_hopping_matrices(
     matrices: np.ndarray, max_value: float = 1.0, display_count: int = 4
 ):
     """
-    Plot the matrices with a slider to scroll through number of Bravais points ($N_R$).
+    Plots the matrices with a slider to scroll through number of Bravais points ($N_R$).
 
     Args:
         matrices (np.array): The matrices to be plotted.
@@ -86,7 +86,7 @@ def plot_hopping_matrices(
 
 def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
     """
-    Plot the band structure of a Hamiltonian.
+    Plots the band structure of a Hamiltonian.
 
     Args:
         eigenvalues (np.ndarray): Eigenvalues of the Hamiltonian matrix of shape (Nk, Norb).
@@ -124,7 +124,7 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
 
     plt.xlim(0, len(eigenvalues) - 1)
     plt.xlabel("k-points")
-    plt.ylabel("Energy")
+    plt.ylabel("Energy (eV)")
     plt.title("Band Structure")
     plt.legend()
     plt.grid(True)
@@ -132,16 +132,24 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
     plt.show()
 
 
-def plot_dos(center, orbital_dos, total_dos):
+def plot_dos(energies, orbital_dos, total_dos):
+    """
+    Plots the density of states (DOS) of a tight-binding Hamiltonian.
+
+    Args:
+        energies: the energies at which the DOS is evaluated.
+        orbital_dos: the orbital-resolved DOS.
+        total_dos: the total DOS.
+    """
     # Create a figure
     plt.figure(figsize=(8, 6))
-    plt.plot(center, total_dos, label="Total DOS")
+    plt.plot(energies, total_dos, label="Total DOS", color="k", linewidth=3.5)
 
     # Plot orbital-resolved DOS
     for i, orb_dos in enumerate(orbital_dos):
-        plt.plot(center, orb_dos, label=f"Orbital {i + 1}")
+        plt.plot(energies, orb_dos, label=f"Orbital {i + 1}")
 
-    plt.xlabel("Energy")
+    plt.xlabel("Energy (eV)")
     plt.ylabel("Density of States (DOS)")
     plt.legend()
     plt.show()

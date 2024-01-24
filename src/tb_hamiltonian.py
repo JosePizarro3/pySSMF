@@ -201,6 +201,6 @@ class TBHamiltonian(KSampling):
             kpoints (np.ndarray): Array of k-points at which to diagonalize the Hamiltonian.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: A tuple containing eigenvectors and eigenvalues.
+            Tuple[np.ndarray, np.ndarray]: A tuple containing eigenvalues and eigenvectors.
         """
         return np.linalg.eigh(self.hamiltonian(kpoints))
