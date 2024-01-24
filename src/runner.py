@@ -58,6 +58,8 @@ class Runner(ValidLatticeModels):
                 "Could not recognize the input tight-binding model. Please "
                 "check your inputs."
             )
+            return
+        self.logger.info("Tight-binding model parsed successfully!")
 
     def prune_hoppings(self):
         """
@@ -69,6 +71,7 @@ class Runner(ValidLatticeModels):
             pruner.prune_by_threshold(prune_threshold, self.logger)
             if self.data.get("plot_hoppings"):
                 plot_hopping_matrices(pruner.hopping_matrix_norms / pruner.max_value)
+            self.logger.info("Hopping pruning finished!")
 
     def calculate_band_structure(self):
         """
@@ -82,6 +85,7 @@ class Runner(ValidLatticeModels):
         kpoints = tb_hamiltonian.kpoints
         eigenvalues, _ = tb_hamiltonian.diagonalize(kpoints)
         plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
+        self.logger.info("Band structure calculation finished!")
 
     def gaussian_convolution(
         self,
@@ -190,7 +194,9 @@ class Runner(ValidLatticeModels):
                 eigenvalues, eigenvectors, bins, width, delta_energy
             )
             plot_dos(energies, orbital_dos, total_dos)
+            self.logger.info("DOS calculation finished!")
 
+        self.logger.info("BZ diagonalization calculation finished!")
         return eigenvalues, eigenvectors
 
     def run(self):
@@ -202,4 +208,3 @@ class Runner(ValidLatticeModels):
             self.calculate_band_structure()
 
         self.bz_diagonalization()
-        self.logger.info("BZ diagonalizatio finished")
