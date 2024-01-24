@@ -1,7 +1,7 @@
 {
     "code": "SSMF",
     "working_directory": "/home/josepizarro/SSMF/work_dir",
-    "model": "linear",
+    "tb_model": "linear",
     "hoppings": [
         [
             [
@@ -19,5 +19,16 @@
         0.0
     ],
     "n_hoppings": 1,
-    "n_orbitals": 2
+    "n_orbitals": 2,
+    "n_k_path": 90,
+    "k_grid": [
+        300,
+        1,
+        1
+    ],
+    "plot_hoppings": false,
+    "plot_bands": true,
+    "dos": true,
+    "dos_gaussian_width": 0.2,
+    "dos_delta_energy": 0.01
 }

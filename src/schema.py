@@ -20,22 +20,23 @@ from nomad.metainfo import MSection, Quantity, Section, SubSection
 
 
 class System(MSection):
-    '''
+    """
     Section containing the atomic system metadata.
-    '''
+    """
 
     m_def = Section(validate=False)
 
     n_atoms = Quantity(
         type=np.int32,
-        description='''
+        description="""
         The total number of atoms in the system.
-        ''')
+        """,
+    )
 
     labels = Quantity(
         type=str,
-        shape=['n_atoms'],
-        description='''
+        shape=["n_atoms"],
+        description="""
         List containing the labels of the atoms. In the usual case, these correspond to
         the chemical symbols of the atoms. One can also append an index if there is a
         need to distinguish between species with the same symbol, e.g., atoms of the
@@ -44,84 +45,92 @@ class System(MSection):
         and on the surface. In the case where a species is not an atom, and therefore
         cannot be representated by a chemical symbol, the label can simply be the name of
         the particles.
-        ''')
+        """,
+    )
 
     positions = Quantity(
         type=np.float64,
-        shape=['n_atoms', 3],
-        unit='angstrom',
-        description='''
+        shape=["n_atoms", 3],
+        unit="angstrom",
+        description="""
         Positions of all the species, in cartesian coordinates. This metadata defines a
         configuration and is therefore required. For alloys where concentrations of
         species are given for each site in the unit cell, it stores the position of the
         sites.
-        ''')
+        """,
+    )
 
     lattice_vectors = Quantity(
         type=np.float64,
         shape=[3, 3],
-        unit='angstrom',
-        description='''
+        unit="angstrom",
+        description="""
         Lattice vectors of the simulation cell in cartesian coordinates. The
         last (fastest) index runs over the $x,y,z$ Cartesian coordinates, and the first
         index runs over the 3 lattice vectors.
-        ''')
+        """,
+    )
 
     reciprocal_lattice_vectors = Quantity(
         type=np.float64,
         shape=[3, 3],
-        unit='1/angstrom',
-        description='''
+        unit="1/angstrom",
+        description="""
         Reciprocal lattice vectors of the simulation cell, in cartesian coordinates and with the 2 $pi$ pre-factor.
         The first index runs over the $x,y,z$ Cartesian coordinates, and the second index runs
         over the 3 lattice vectors.
-        ''')
+        """,
+    )
 
     periodic = Quantity(
         type=bool,
         shape=[3],
-        description='''
+        description="""
         Denotes if periodic boundary condition is applied to each of the lattice vectors.'
-        ''')
+        """,
+    )
 
 
 class BravaisLattice(MSection):
-    '''
+    """
     Section containing the Bravais lattice metadata.
-    '''
+    """
 
     m_def = Section(validate=False)
 
-    system = SubSection(sub_section=System.m_def)
-
     n_points = Quantity(
         type=np.int32,
-        description='''
+        description="""
         Number of Bravais lattice points.
-        ''')
+        """,
+    )
 
     points = Quantity(
         type=np.float64,
-        shape=['n_points', 3],
-        unit='angstrom',
-        description='''
+        shape=["n_points", 3],
+        unit="angstrom",
+        description="""
         Values of the Bravais lattice points used to obtain the hopping integrals. They are
         sorted from smaller to larger values of the norm.
-        ''')
+        """,
+    )
 
     formula_hill = Quantity(
         type=str,
-        description='''
+        description="""
         The chemical formula for a structure in Hill form with element symbols followed
         by non-reduced integer chemical proportion numbers. The proportion number is
         omitted if it is 1.
-        ''')
+        """,
+    )
+
+    system = SubSection(sub_section=System.m_def)
 
 
 class Model(MSection):
-    '''
+    """
     Section containing the tight-binding model metadata.
-    '''
+    """
 
     m_def = Section(validate=False)
 
@@ -129,33 +138,36 @@ class Model(MSection):
 
     n_orbitals = Quantity(
         type=np.int32,
-        description='''
+        description="""
         Number of projected orbitals.
-        ''')
+        """,
+    )
 
     degeneracy_factors = Quantity(
         type=np.int32,
-        shape=['n_points'],
-        description='''
+        shape=["n_points"],
+        description="""
         Degeneracy of each Bravais lattice point.
-        ''')
+        """,
+    )
 
     onsite_energies = Quantity(
         type=np.float64,
-        shape=['n_orbitals'],
-        unit='eV',
-        description='''
-        Values of the onsite energies (i.e., bravais_lattice.points = [0, 0, 0]) for each
-        orbital.
-        ''')
+        shape=["n_orbitals"],
+        unit="eV",
+        description="""
+        Values of the onsite energies for each orbital.
+        """,
+    )
 
     hopping_matrix = Quantity(
         type=np.complex128,
-        shape=['n_points', 'n_orbitals', 'n_orbitals'],
-        unit='eV',
-        description='''
+        shape=["n_points", "n_orbitals", "n_orbitals"],
+        unit="eV",
+        description="""
         Real space hopping matrix for each Bravais lattice point as a matrix of dimension
         (n_orbitals * n_orbitals).
 
         It is sorted from smaller bravais_lattice.points norm to larger.
-        ''')
+        """,
+    )

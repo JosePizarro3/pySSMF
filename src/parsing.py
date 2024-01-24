@@ -18,61 +18,71 @@ import numpy as np
 import os
 import logging
 
-import ase
-
 # NOMAD functionalities for parsing the tight-binding calculation files
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
+
 # NOMAD schema
 from .schema import System, BravaisLattice, Model
 from .utils import get_files
 
-re_n = r'[\n\r]'
+re_n = r"[\n\r]"
 
 
 class WOutParser(TextParser):
-    """Parses the text from the `*.wout` Wannier90 file. It finds (using regex) the values
+    """
+    Parses the text from the `*.wout` Wannier90 file. It finds (using regex) the values
     for the atomic structure.
     """
+
     def __init__(self):
         super().__init__(None)
 
     def init_quantities(self):
         structure_quantities = [
-            Quantity('labels', r'\|\s*([A-Z][a-z]*)', repeats=True),
-            Quantity('positions', r'\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)', repeats=True)
+            Quantity("labels", r"\|\s*([A-Z][a-z]*)", repeats=True),
+            Quantity(
+                "positions",
+                r"\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)",
+                repeats=True,
+            ),
         ]
 
         self._quantities = [
+            Quantity("lattice_vectors", r"\s*a_\d\s*([\d\-\s\.]+)", repeats=True),
             Quantity(
-                'lattice_vectors', r'\s*a_\d\s*([\d\-\s\.]+)', repeats=True),
-            Quantity(
-                'structure', rf'(\s*Fractional Coordinate[\s\S]+?)(?:{re_n}\s*(PROJECTIONS|K-POINT GRID))',
-                repeats=False, sub_parser=TextParser(quantities=structure_quantities)),
+                "structure",
+                rf"(\s*Fractional Coordinate[\s\S]+?)(?:{re_n}\s*(PROJECTIONS|K-POINT GRID))",
+                repeats=False,
+                sub_parser=TextParser(quantities=structure_quantities),
+            ),
         ]
 
 
 class HrParser(TextParser):
-    """Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors
+    """
+    Parses the `*_hr.dat` Wannier90 file. It finds (using regex) the degeneracy factors
     at the begining of the file and the list of hoppings.
     """
+
     def __init__(self):
         super().__init__(None)
 
     def init_quantities(self):
         self._quantities = [
-            Quantity('degeneracy_factors', r'\s*written on[\s\w]*:\d*:\d*\s*([\d\s]+)'),
-            Quantity('hoppings', r'\s*([-\d\s.]+)', repeats=False)
+            Quantity("degeneracy_factors", r"\s*written on[\s\w]*:\d*:\d*\s*([\d\s]+)"),
+            Quantity("hoppings", r"\s*([-\d\s.]+)", repeats=False),
         ]
 
 
-class MinimalWannier90Parser():
+class MinimalWannier90Parser:
     def __init__(self):
         self.wout_parser = WOutParser()
         self.hr_parser = HrParser()
 
     def init_parser(self):
-        """Initializes the parser attributes.
+        """
+        Initializes the parser attributes.
         """
         self.wout_parser.mainfile = self.mainfile
         self.wout_parser.logger = self.logger
@@ -80,43 +90,46 @@ class MinimalWannier90Parser():
         self.hr_parser.logger = self.logger
 
     def parse_system(self):
-        """Parses the system metadata.
-
-        Args:
-            model (Model): section Model to store the system information.
+        """
+        Parses the system metadata and stores it under `Model`.
         """
         sec_system = self.model.m_create(BravaisLattice).m_create(System)
 
-        structure = self.wout_parser.get('structure')
+        structure = self.wout_parser.get("structure")
         if structure is None:
-            self.logger.error('Error parsing the structure from .wout')
+            self.logger.error("Error parsing the structure from .wout")
             return
-        if self.wout_parser.get('lattice_vectors', []):
-            lattice_vectors = np.vstack(self.wout_parser.get('lattice_vectors', [])[-3:])
+        if self.wout_parser.get("lattice_vectors", []):
+            lattice_vectors = np.vstack(
+                self.wout_parser.get("lattice_vectors", [])[-3:]
+            )
             sec_system.lattice_vectors = lattice_vectors * ureg.angstrom
             sec_system.periodic = [True, True, True]
-        sec_system.labels = structure.get('labels')
-        if structure.get('positions') is not None:
-            sec_system.positions = structure.get('positions') * ureg.angstrom
+        sec_system.labels = structure.get("labels")
+        if structure.get("positions") is not None:
+            sec_system.positions = structure.get("positions") * ureg.angstrom
 
     def parse_hoppings(self):
-        """Parses the hoppings metadata.
-
-        Args:
-            model (Model): section Model to store the hoppings information.
+        """
+        Parses the hoppings metadata and stores them under `Model`.
         """
         bravais_lattice = self.model.bravais_lattice
 
-        deg_factors = self.hr_parser.get('degeneracy_factors', [])
-        full_hoppings = self.hr_parser.get('hoppings', [])
+        deg_factors = self.hr_parser.get("degeneracy_factors", [])
+        full_hoppings = self.hr_parser.get("hoppings", [])
         if deg_factors is not None and full_hoppings is not None:
             n_orbitals = deg_factors[0]
             n_points = deg_factors[1]
-            wann90_hops = np.reshape(full_hoppings, (n_points, n_orbitals, n_orbitals, 7))
+            wann90_hops = np.reshape(
+                full_hoppings, (n_points, n_orbitals, n_orbitals, 7)
+            )
             # Parse BravaisLattice
             bravais_lattice.n_points = n_points
             bravais_lattice_points = wann90_hops[:, 0, 0, :3]
-            bravais_lattice_points = bravais_lattice_points @ bravais_lattice.system.lattice_vectors.magnitude
+            bravais_lattice_points = (
+                bravais_lattice_points
+                @ bravais_lattice.system.lattice_vectors.magnitude
+            )
             sorted_indices = np.argsort(np.linalg.norm(bravais_lattice_points, axis=1))
             bravais_lattice_points_sorted = bravais_lattice_points[sorted_indices]
             bravais_lattice.points = bravais_lattice_points_sorted
@@ -135,17 +148,19 @@ class MinimalWannier90Parser():
             self.model.hopping_matrix = hops_sorted * ureg.eV
 
     def parse(self, filepath: str, model: Model, logger: logging.Logger = None):
-        """Parses the system, Bravais lattice and hoppings information and stores it in the
+        """
+        Parses the system, Bravais lattice and hoppings information and stores it in the
         section Model.
 
         Args:
             filepath (str): path to the file `*_hr.dat` to be parsed.
             model (Model): section Model to store metadata.
+            logger (logging.Logger, optional): Logger object for debug messages. Defaults to None.
         """
         basename = os.path.basename(filepath)  # Getting filepath for *_hr.dat file
-        wout_files = get_files('*.wout', filepath, basename)
+        wout_files = get_files("*.wout", filepath, basename)
         if len(wout_files) > 1:
-            logger.warning('Multiple `*.wout` files found; we will parse the last one.')
+            logger.warning("Multiple `*.wout` files found; we will parse the last one.")
         mainfile = wout_files[-1]  # Path to *.wout file
 
         self.filepath = filepath
@@ -159,7 +174,7 @@ class MinimalWannier90Parser():
         self.parse_hoppings()
 
 
-class MinimalTBStudioParser():
+class MinimalTBStudioParser:
     def __init__(self):
         pass
 
@@ -174,17 +189,21 @@ class MinimalTBStudioParser():
         self.init_parser()
 
 
-class ToyModels():
+class ToyModels:
     def __init__(self):
         pass
 
     def _bravais_vectors(self, n_neighbors, lattice_vectors):
         bravais_vectors = []
-        if self.lattice_model == 'linear':
+        if self.lattice_model == "linear":
             for i in range(-n_neighbors, n_neighbors + 1):
                 j = 0
                 k = 0
-                bravais_vectors.append(i * lattice_vectors[0] + j * lattice_vectors[1] + k * lattice_vectors[2])
+                bravais_vectors.append(
+                    i * lattice_vectors[0]
+                    + j * lattice_vectors[1]
+                    + k * lattice_vectors[2]
+                )
         bravais_vectors = np.array(bravais_vectors)
         bravais_vectors_norms = np.linalg.norm(bravais_vectors, axis=1)
         sorted_indices = np.argsort(bravais_vectors_norms)
@@ -196,18 +215,20 @@ class ToyModels():
         system = bravais_lattice.m_create(System)
         lattice_vectors = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
         _system_map = {
-            'lattice_vectors': lattice_vectors,
-            'periodic': [True, False, False],
-            'n_atoms': 1,
-            'labels': ['X'],
-            'positions': [[0, 0, 0]]
+            "lattice_vectors": lattice_vectors,
+            "periodic": [True, False, False],
+            "n_atoms": 1,
+            "labels": ["X"],
+            "positions": [[0, 0, 0]],
         }
         for key in system.m_def.all_quantities.keys():
             system.m_set(system.m_get_quantity_definition(key), _system_map.get(key))
 
         # Bravais lattice storage
         n_neighbors = self.hoppings.shape[0]
-        points, points_norms = self._bravais_vectors(n_neighbors, np.array(lattice_vectors))
+        points, points_norms = self._bravais_vectors(
+            n_neighbors, np.array(lattice_vectors)
+        )
         bravais_lattice.n_points = len(points)
         bravais_lattice.points = points
 

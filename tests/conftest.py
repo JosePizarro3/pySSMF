@@ -17,13 +17,13 @@
 import pytest
 import numpy as np
 
-from src.py_tools.schema import System, BravaisLattice, Model
+from src.schema import System, BravaisLattice, Model
 
 
 def get_template_system():
     system = System()
     system.n_atoms = 2
-    system.labels = ['H', 'O']
+    system.labels = ["H", "O"]
     system.positions = np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1]])
     system.lattice_vectors = np.identity(3)
     return system
@@ -32,7 +32,9 @@ def get_template_system():
 def get_template_bravais_lattice():
     bravais_lattice = BravaisLattice()
     bravais_lattice.n_points = 3
-    bravais_lattice.points = np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.2, 0.2, 0.2]])
+    bravais_lattice.points = np.array(
+        [[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.2, 0.2, 0.2]]
+    )
     return bravais_lattice
 
 
@@ -41,11 +43,9 @@ def get_template_model():
     model.n_orbitals = 4
     model.degeneracy_factors = np.array([1, 2, 2])
     model.onsite_energies = np.array([0.5, 0.6, 0.7, 0.8])
-    model.hopping_matrix = np.array([
-        [[0.6, 0.5], [0.4, 0.3]],
-        [[0.5, 0.4], [0.3, 0.2]],
-        [[0.4, 0.3], [0.2, 0.1]]
-    ])
+    model.hopping_matrix = np.array(
+        [[[0.6, 0.5], [0.4, 0.3]], [[0.5, 0.4], [0.3, 0.2]], [[0.4, 0.3], [0.2, 0.1]]]
+    )
     return model
 
 

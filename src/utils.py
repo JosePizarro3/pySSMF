@@ -21,8 +21,9 @@ from typing import Union
 import numpy as np
 
 
-def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = True):
-    """Get files following the `pattern` with respect to the file `stripname` (usually this
+def get_files(pattern: str, filepath: str, stripname: str = "", deep: bool = True):
+    """
+    Get files following the `pattern` with respect to the file `stripname` (usually this
     being the mainfile of the given parser) up to / down from the `filepath` (`deep=True` going
     down, `deep=False` up)
 
@@ -36,8 +37,8 @@ def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = Tru
         list: List of found files.
     """
     for _ in range(10):
-        filenames = glob(f'{os.path.dirname(filepath)}/{pattern}')
-        pattern = os.path.join('**' if deep else '..', pattern)
+        filenames = glob(f"{os.path.dirname(filepath)}/{pattern}")
+        pattern = os.path.join("**" if deep else "..", pattern)
         if filenames:
             break
 
@@ -51,8 +52,12 @@ def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = Tru
     return filenames
 
 
-def extract_hdf5_dataset(data: Union[h5py.Dataset, h5py.Group], default: Union[bool, int, float, np.ndarray, None] = None):
-    """Extracts the hdf5 dataset and returns it as its Python native type. It can also return
+def extract_hdf5_dataset(
+    data: Union[h5py.Dataset, h5py.Group],
+    default: Union[bool, int, float, np.ndarray, None] = None,
+):
+    """
+    Extracts the hdf5 dataset and returns it as its Python native type. It can also return
     a default value if specified and data is not a `h5py.Dataset` object.
 
     Args:
