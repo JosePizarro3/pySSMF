@@ -73,19 +73,37 @@ class Runner(ValidLatticeModels):
                 plot_hopping_matrices(pruner.hopping_matrix_norms / pruner.max_value)
             self.logger.info('Hopping pruning finished!')
 
-    def calculate_band_structure(self):
+    def calculate_fermi_level(self, eigenvalues, n_k_points):
         """
-        Calculates the band structure of the tight-binding model in a given `n_k_path`.
+        Calculates the Fermi level by ordering the eigenvalues and selecting the one that
+        corresponds to the filling of the system.
         """
-        n_k_path = self.data.get('n_k_path', 90)
-        tb_hamiltonian = TBHamiltonian(
-            self.model, k_grid_type='bands', n_k_path=n_k_path
+        n_orbitals = self.model.n_orbitals
+        if eigenvalues.shape != (n_k_points, n_orbitals):
+            self.logger.error(
+                'Eigenvalues shape does not match (n_k_points, n_orbitals).'
+            )
+            return
+        n_electrons = self.data.get('n_electrons', 1)
+        if n_electrons > n_orbitals:
+            self.logger.error(
+                'Found n_electrons > n_orbitals, but n_electrons can only be <= n_orbitals. '
+                'The rule is that n_electrons / n_orbitals should represent the filling. '
+                'Half-filling is n_electrons / n_orbitals = 0.5.'
+            )
+            return
+        filling = float(n_electrons / n_orbitals)  # filling = 0.5 for half-filling
+        i_fermi = int(
+            filling * n_k_points * n_orbitals
+        )  # eigenvalue position of the Fermi level
+        # We evaluate the histogram for propper Fermi level extraction
+        _, edges = np.histogram(
+            eigenvalues,
+            bins=n_k_points * n_orbitals,
+            density=True,
         )
-        special_points = tb_hamiltonian.k_path.special_points
-        kpoints = tb_hamiltonian.kpoints
-        eigenvalues, _ = tb_hamiltonian.diagonalize(kpoints)
-        plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
-        self.logger.info('Band structure calculation finished!')
+        energies = (edges[:-1] + edges[1:]) / 2
+        return energies[i_fermi]
 
     def gaussian_convolution(
         self,
@@ -183,28 +201,47 @@ class Runner(ValidLatticeModels):
         k_grid = self.data.get('k_grid', [1, 1, 1])
         tb_hamiltonian = TBHamiltonian(self.model, k_grid_type='full_bz', k_grid=k_grid)
         kpoints = tb_hamiltonian.kpoints
+        n_k_points = tb_hamiltonian.n_k_points
         eigenvalues, eigenvectors = tb_hamiltonian.diagonalize(kpoints)
 
+        # Calculate Fermi level
+        fermi_level = self.calculate_fermi_level(eigenvalues, n_k_points)
+
         # Calculating and plotting DOS
-        if self.data.get('dos'):
-            bins = int(np.linalg.norm(k_grid))
+        if self.data.get('dos') and fermi_level:
             width = self.data.get('dos_gaussian_width')
             delta_energy = self.data.get('dos_delta_energy')
             energies, orbital_dos, total_dos = self.calculate_dos(
-                eigenvalues, eigenvectors, bins, width, delta_energy
+                eigenvalues, eigenvectors, n_k_points, width, delta_energy
             )
-            plot_dos(energies, orbital_dos, total_dos)
+            plot_dos(energies, fermi_level, orbital_dos, total_dos)
             self.logger.info('DOS calculation finished!')
 
         self.logger.info('BZ diagonalization calculation finished!')
-        return eigenvalues, eigenvectors
+        return eigenvalues, eigenvectors, fermi_level
+
+    def calculate_band_structure(self, fermi_level: np.float64 = 0.0):
+        """
+        Calculates the band structure of the tight-binding model in a given `n_k_path`.
+        """
+        n_k_path = self.data.get('n_k_path', 90)
+        tb_hamiltonian = TBHamiltonian(
+            self.model, k_grid_type='bands', n_k_path=n_k_path
+        )
+        special_points = tb_hamiltonian.k_path.special_points
+        kpoints = tb_hamiltonian.kpoints
+        eigenvalues, _ = tb_hamiltonian.diagonalize(kpoints)
+        plot_band_structure(eigenvalues, fermi_level, tb_hamiltonian, special_points)
+        self.logger.info('Band structure calculation finished!')
 
     def run(self):
         self.parse_tb_model()
 
         self.prune_hoppings()
 
-        if self.data.get('plot_bands'):
-            self.calculate_band_structure()
+        eigenvalues, eigenvectors, fermi_level = self.bz_diagonalization()
 
-        self.bz_diagonalization()
+        if self.data.get('plot_bands') and fermi_level:
+            self.calculate_band_structure(fermi_level)
+
+        print('Finished!')
