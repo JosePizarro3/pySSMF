@@ -54,7 +54,7 @@ def plot_hopping_matrices(
         fig.canvas.draw_idle()
 
     # Create the slider
-    ax_slider = plt.axes([0.2, 0.01, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+    ax_slider = plt.axes((0.2, 0.01, 0.65, 0.03), facecolor='lightgoldenrodyellow')
     slider = Slider(
         ax_slider,
         'Start $N_R$',
@@ -69,7 +69,7 @@ def plot_hopping_matrices(
     update(0)
 
     # Add a colorbar to the figure, adjust the position for better spacing
-    cbar_ax = fig.add_axes([0.93, 0.15, 0.02, 0.7])
+    cbar_ax = fig.add_axes((0.93, 0.15, 0.02, 0.7))
     fig.colorbar(
         plt.cm.ScalarMappable(
             cmap='inferno', norm=plt.Normalize(vmin=0, vmax=max_value)
@@ -78,7 +78,7 @@ def plot_hopping_matrices(
     )
 
     plt.tight_layout(
-        rect=[0, 0.05, 0.9, 1]
+        rect=(0, 0.05, 0.9, 1)
     )  # Adjust the right bound to 0.9 to provide space for the colorbar
     plt.show()
 
