@@ -34,7 +34,7 @@ class Runner(ValidLatticeModels):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.data = kwargs.get("data", {})
+        self.data = kwargs.get('data', {})
         # Initializing the model class
         self.model = Model()
 
@@ -43,49 +43,49 @@ class Runner(ValidLatticeModels):
         Parses the tight-binding model from the input file. It can be obtained from a Wannier90
         tight-binding calculation or a toy lattice model.
         """
-        lattice_model = self.data.get("tb_model", "")
-        if "_hr.dat" in lattice_model:
-            model_file = os.path.join(self.data.get("working_directory"), lattice_model)
+        lattice_model = self.data.get('tb_model', '')
+        if '_hr.dat' in lattice_model:
+            model_file = os.path.join(self.data.get('working_directory'), lattice_model)
             MinimalWannier90Parser().parse(model_file, self.model, self.logger)
         elif lattice_model in self._valid_lattice_models:
-            onsite_energies = self.data.get("onsite_energies")
-            hoppings = self.data.get("hoppings")
+            onsite_energies = self.data.get('onsite_energies')
+            hoppings = self.data.get('hoppings')
             ToyModels().parse(
                 lattice_model, onsite_energies, hoppings, self.model, self.logger
             )
         else:
             self.logger.error(
-                "Could not recognize the input tight-binding model. Please "
-                "check your inputs."
+                'Could not recognize the input tight-binding model. Please '
+                'check your inputs.'
             )
             return
-        self.logger.info("Tight-binding model parsed successfully!")
+        self.logger.info('Tight-binding model parsed successfully!')
 
     def prune_hoppings(self):
         """
         Prunes the hopping matrices by setting to zero all values below a certain `prune_threshold`.
         """
-        prune_threshold = self.data.get("prune_threshold")
+        prune_threshold = self.data.get('prune_threshold')
         if prune_threshold:
             pruner = Pruner(self.model)
             pruner.prune_by_threshold(prune_threshold, self.logger)
-            if self.data.get("plot_hoppings"):
+            if self.data.get('plot_hoppings'):
                 plot_hopping_matrices(pruner.hopping_matrix_norms / pruner.max_value)
-            self.logger.info("Hopping pruning finished!")
+            self.logger.info('Hopping pruning finished!')
 
     def calculate_band_structure(self):
         """
         Calculates the band structure of the tight-binding model in a given `n_k_path`.
         """
-        n_k_path = self.data.get("n_k_path", 90)
+        n_k_path = self.data.get('n_k_path', 90)
         tb_hamiltonian = TBHamiltonian(
-            self.model, k_grid_type="bands", n_k_path=n_k_path
+            self.model, k_grid_type='bands', n_k_path=n_k_path
         )
         special_points = tb_hamiltonian.k_path.special_points
         kpoints = tb_hamiltonian.kpoints
         eigenvalues, _ = tb_hamiltonian.diagonalize(kpoints)
         plot_band_structure(eigenvalues, tb_hamiltonian, special_points)
-        self.logger.info("Band structure calculation finished!")
+        self.logger.info('Band structure calculation finished!')
 
     def gaussian_convolution(
         self,
@@ -165,7 +165,7 @@ class Runner(ValidLatticeModels):
             orbital_dos_histogram.append(orbital_dos_contribution_histogram)
         if not orbital_dos_histogram:
             self.logger.warning(
-                "Problem obtaining the orbital DOS histogram. Cannot resolve DOS."
+                'Problem obtaining the orbital DOS histogram. Cannot resolve DOS.'
             )
         # We convolute the histogram to obtain a smoother orbital DOS
         energies, orbital_dos = self.gaussian_convolution(
@@ -180,23 +180,23 @@ class Runner(ValidLatticeModels):
         Diagonalizes the tight-binding model in the full Brillouin zone and returns its
         eigenvalues and eigenvectors.
         """
-        k_grid = self.data.get("k_grid", [1, 1, 1])
-        tb_hamiltonian = TBHamiltonian(self.model, k_grid_type="full_bz", k_grid=k_grid)
+        k_grid = self.data.get('k_grid', [1, 1, 1])
+        tb_hamiltonian = TBHamiltonian(self.model, k_grid_type='full_bz', k_grid=k_grid)
         kpoints = tb_hamiltonian.kpoints
         eigenvalues, eigenvectors = tb_hamiltonian.diagonalize(kpoints)
 
         # Calculating and plotting DOS
-        if self.data.get("dos"):
+        if self.data.get('dos'):
             bins = int(np.linalg.norm(k_grid))
-            width = self.data.get("dos_gaussian_width")
-            delta_energy = self.data.get("dos_delta_energy")
+            width = self.data.get('dos_gaussian_width')
+            delta_energy = self.data.get('dos_delta_energy')
             energies, orbital_dos, total_dos = self.calculate_dos(
                 eigenvalues, eigenvectors, bins, width, delta_energy
             )
             plot_dos(energies, orbital_dos, total_dos)
-            self.logger.info("DOS calculation finished!")
+            self.logger.info('DOS calculation finished!')
 
-        self.logger.info("BZ diagonalization calculation finished!")
+        self.logger.info('BZ diagonalization calculation finished!')
         return eigenvalues, eigenvectors
 
     def run(self):
@@ -204,7 +204,7 @@ class Runner(ValidLatticeModels):
 
         self.prune_hoppings()
 
-        if self.data.get("plot_bands"):
+        if self.data.get('plot_bands'):
             self.calculate_band_structure()
 
         self.bz_diagonalization()

@@ -26,7 +26,7 @@ from nomad.units import ureg
 from .schema import System, BravaisLattice, Model
 from .utils import get_files
 
-re_n = r"[\n\r]"
+re_n = r'[\n\r]'
 
 
 class WOutParser(TextParser):
@@ -40,19 +40,19 @@ class WOutParser(TextParser):
 
     def init_quantities(self):
         structure_quantities = [
-            Quantity("labels", r"\|\s*([A-Z][a-z]*)", repeats=True),
+            Quantity('labels', r'\|\s*([A-Z][a-z]*)', repeats=True),
             Quantity(
-                "positions",
-                r"\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)",
+                'positions',
+                r'\|\s*([\-\d\.]+)\s*([\-\d\.]+)\s*([\-\d\.]+)',
                 repeats=True,
             ),
         ]
 
         self._quantities = [
-            Quantity("lattice_vectors", r"\s*a_\d\s*([\d\-\s\.]+)", repeats=True),
+            Quantity('lattice_vectors', r'\s*a_\d\s*([\d\-\s\.]+)', repeats=True),
             Quantity(
-                "structure",
-                rf"(\s*Fractional Coordinate[\s\S]+?)(?:{re_n}\s*(PROJECTIONS|K-POINT GRID))",
+                'structure',
+                rf'(\s*Fractional Coordinate[\s\S]+?)(?:{re_n}\s*(PROJECTIONS|K-POINT GRID))',
                 repeats=False,
                 sub_parser=TextParser(quantities=structure_quantities),
             ),
@@ -70,8 +70,8 @@ class HrParser(TextParser):
 
     def init_quantities(self):
         self._quantities = [
-            Quantity("degeneracy_factors", r"\s*written on[\s\w]*:\d*:\d*\s*([\d\s]+)"),
-            Quantity("hoppings", r"\s*([-\d\s.]+)", repeats=False),
+            Quantity('degeneracy_factors', r'\s*written on[\s\w]*:\d*:\d*\s*([\d\s]+)'),
+            Quantity('hoppings', r'\s*([-\d\s.]+)', repeats=False),
         ]
 
 
@@ -95,19 +95,19 @@ class MinimalWannier90Parser:
         """
         sec_system = self.model.m_create(BravaisLattice).m_create(System)
 
-        structure = self.wout_parser.get("structure")
+        structure = self.wout_parser.get('structure')
         if structure is None:
-            self.logger.error("Error parsing the structure from .wout")
+            self.logger.error('Error parsing the structure from .wout')
             return
-        if self.wout_parser.get("lattice_vectors", []):
+        if self.wout_parser.get('lattice_vectors', []):
             lattice_vectors = np.vstack(
-                self.wout_parser.get("lattice_vectors", [])[-3:]
+                self.wout_parser.get('lattice_vectors', [])[-3:]
             )
             sec_system.lattice_vectors = lattice_vectors * ureg.angstrom
             sec_system.periodic = [True, True, True]
-        sec_system.labels = structure.get("labels")
-        if structure.get("positions") is not None:
-            sec_system.positions = structure.get("positions") * ureg.angstrom
+        sec_system.labels = structure.get('labels')
+        if structure.get('positions') is not None:
+            sec_system.positions = structure.get('positions') * ureg.angstrom
 
     def parse_hoppings(self):
         """
@@ -115,8 +115,8 @@ class MinimalWannier90Parser:
         """
         bravais_lattice = self.model.bravais_lattice
 
-        deg_factors = self.hr_parser.get("degeneracy_factors", [])
-        full_hoppings = self.hr_parser.get("hoppings", [])
+        deg_factors = self.hr_parser.get('degeneracy_factors', [])
+        full_hoppings = self.hr_parser.get('hoppings', [])
         if deg_factors is not None and full_hoppings is not None:
             n_orbitals = deg_factors[0]
             n_points = deg_factors[1]
@@ -158,9 +158,9 @@ class MinimalWannier90Parser:
             logger (logging.Logger, optional): Logger object for debug messages. Defaults to None.
         """
         basename = os.path.basename(filepath)  # Getting filepath for *_hr.dat file
-        wout_files = get_files("*.wout", filepath, basename)
+        wout_files = get_files('*.wout', filepath, basename)
         if len(wout_files) > 1:
-            logger.warning("Multiple `*.wout` files found; we will parse the last one.")
+            logger.warning('Multiple `*.wout` files found; we will parse the last one.')
         mainfile = wout_files[-1]  # Path to *.wout file
 
         self.filepath = filepath
@@ -195,7 +195,7 @@ class ToyModels:
 
     def _bravais_vectors(self, n_neighbors, lattice_vectors):
         bravais_vectors = []
-        if self.lattice_model == "linear":
+        if self.lattice_model == 'linear':
             for i in range(-n_neighbors, n_neighbors + 1):
                 j = 0
                 k = 0
@@ -215,11 +215,11 @@ class ToyModels:
         system = bravais_lattice.m_create(System)
         lattice_vectors = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
         _system_map = {
-            "lattice_vectors": lattice_vectors,
-            "periodic": [True, False, False],
-            "n_atoms": 1,
-            "labels": ["X"],
-            "positions": [[0, 0, 0]],
+            'lattice_vectors': lattice_vectors,
+            'periodic': [True, False, False],
+            'n_atoms': 1,
+            'labels': ['X'],
+            'positions': [[0, 0, 0]],
         }
         for key in system.m_def.all_quantities.keys():
             system.m_set(system.m_get_quantity_definition(key), _system_map.get(key))

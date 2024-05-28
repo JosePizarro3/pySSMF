@@ -67,7 +67,7 @@ class KSampling:
 
         try:
             formula = Formula(atoms.get_chemical_formula())
-            self.model.bravais_lattice.formula_hill = formula.format("hill")
+            self.model.bravais_lattice.formula_hill = formula.format('hill')
         except Exception:
             pass
 
@@ -111,7 +111,7 @@ class KSampling:
 
 
 class TBHamiltonian(KSampling):
-    _valid_k_grid_types = ["bands", "full_bz"]
+    _valid_k_grid_types = ['bands', 'full_bz']
 
     def __init__(
         self,
@@ -137,9 +137,9 @@ class TBHamiltonian(KSampling):
         super().__init__(model, n_k_path, k_grid)
         self.k_grid_type = k_grid_type
         self.kpoints = np.empty((0, 3))  # initializing for mypy
-        if k_grid_type == "bands":
+        if k_grid_type == 'bands':
             self.kpoints = 2 * np.pi * self.k_path.cartesian_kpts()
-        elif k_grid_type == "full_bz":
+        elif k_grid_type == 'full_bz':
             self.kpoints = 2 * np.pi * self.k_mesh
         self.n_orbitals = self.model.n_orbitals
         self.n_k_points = len(self.kpoints)
@@ -148,13 +148,13 @@ class TBHamiltonian(KSampling):
     def __repr__(self) -> str:
         cls_name = self.__class__.__name__
         args = [
-            f"n_orbitals={self.n_orbitals}",
-            f"n_k_points={self.n_k_points}",
-            f"n_r_points={self.n_r_points}",
-            f"k_grid_type={self.k_grid_type}",
+            f'n_orbitals={self.n_orbitals}',
+            f'n_k_points={self.n_k_points}',
+            f'n_r_points={self.n_r_points}',
+            f'k_grid_type={self.k_grid_type}',
         ]
         if self.spacegroup:
-            args.append(f"spacegroup.no={self.spacegroup.no}")
+            args.append(f'spacegroup.no={self.spacegroup.no}')
         return f"{cls_name}({', '.join(filter(None, args))})"
 
     def hamiltonian(self, kpoints: np.ndarray) -> np.ndarray:

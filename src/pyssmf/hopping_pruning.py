@@ -60,7 +60,7 @@ class Pruner:
         # problems for hoppings structures which are not so trivial.
         if not self.max_value and not self.hopping_matrix_norms:
             self.logger.warning(
-                "Could not extract the hopping_matrix norms and their max_value."
+                'Could not extract the hopping_matrix norms and their max_value.'
             )
             return
         threshold = threshold_factor * self.max_value
@@ -88,7 +88,7 @@ class Pruner:
                 ]
             except Exception:
                 self.logger.warning(
-                    "Could not update the model parameters after pruning."
+                    'Could not update the model parameters after pruning.'
                 )
 
         self.update_norms_and_max_value()

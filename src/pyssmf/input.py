@@ -27,10 +27,10 @@ class ValidLatticeModels(ABC):
     def __init__(self, logger: logging.Logger = logging.getLogger(__name__)):
         self.logger = logger
         self._valid_lattice_models = [
-            "linear",
-            "square",
-            "honeycomb",
-            "triangular",
+            'linear',
+            'square',
+            'honeycomb',
+            'triangular',
         ]  # TODO extend this
 
 
@@ -64,34 +64,34 @@ class Input(ValidLatticeModels):
         """
         super().__init__()
         # Initializing data
-        data = {"code": "SSMF"}
+        data = {'code': 'SSMF'}
 
         # Check working_directory and stores it in data
-        if not kwargs.get("working_directory"):
+        if not kwargs.get('working_directory'):
             self.logger.error(
-                "Could not find specified the working_directory in the input."
+                'Could not find specified the working_directory in the input.'
             )
             return
-        data["working_directory"] = kwargs.get("working_directory")
+        data['working_directory'] = kwargs.get('working_directory')
 
         # Read from input file if provided in the argument
-        read_input_file = kwargs.get("read_from_input_file", False)
+        read_input_file = kwargs.get('read_from_input_file', False)
         if read_input_file:
-            data["input_file"] = kwargs.get("input_file")
+            data['input_file'] = kwargs.get('input_file')
             input_file = os.path.join(
-                kwargs.get("working_directory"), kwargs.get("input_file")
+                kwargs.get('working_directory'), kwargs.get('input_file')
             )
-            data["input_data"] = self.read_from_file(input_file)
+            data['input_data'] = self.read_from_file(input_file)
         else:
             # We check whether a model_file has been defined or a model_label
-            if kwargs.get("tb_model_file"):
-                data["tb_model"] = kwargs.get("tb_model_file")
+            if kwargs.get('tb_model_file'):
+                data['tb_model'] = kwargs.get('tb_model_file')
                 # pruning only applies for tb_model_file cases
-                if kwargs.get("pruning", False):
-                    data["prune_threshold"] = kwargs.get("prune_threshold", 0.01)
-            elif kwargs.get("lattice_model") in self._valid_lattice_models:
-                data["tb_model"] = kwargs.get("lattice_model")
-                hoppings = kwargs.get("hoppings", [])
+                if kwargs.get('pruning', False):
+                    data['prune_threshold'] = kwargs.get('prune_threshold', 0.01)
+            elif kwargs.get('lattice_model') in self._valid_lattice_models:
+                data['tb_model'] = kwargs.get('lattice_model')
+                hoppings = kwargs.get('hoppings', [])
                 # We check if 'hoppings' was empty
                 if len(hoppings) == 0:
                     n_hoppings = 1
@@ -101,8 +101,8 @@ class Input(ValidLatticeModels):
                 n_hoppings = len(hoppings)
                 if n_hoppings > 3:
                     self.logger.error(
-                        "Maximum n_hoppings models supported is 3. Please, select "
-                        "a smaller number."
+                        'Maximum n_hoppings models supported is 3. Please, select '
+                        'a smaller number.'
                     )
                     return
                 n_orbitals = len(hoppings[0])
@@ -112,40 +112,40 @@ class Input(ValidLatticeModels):
                     for hop_point in hoppings
                 ):
                     self.logger.error(
-                        "Dimensions of each hopping matrix do not coincide with"
-                        "(n_orbitals, n_orbitals).",
-                        data={"n_orbitals": n_orbitals},
+                        'Dimensions of each hopping matrix do not coincide with'
+                        '(n_orbitals, n_orbitals).',
+                        data={'n_orbitals': n_orbitals},
                     )
                 # TODO improve this
-                onsite_energies = kwargs.get("onsite_energies", [])
+                onsite_energies = kwargs.get('onsite_energies', [])
                 if len(onsite_energies) == 0:
                     onsite_energies = [0.0] * n_orbitals
-                data["hoppings"] = hoppings
-                data["onsite_energies"] = onsite_energies
-                data["n_hoppings"] = n_hoppings
-                data["n_orbitals"] = n_orbitals
+                data['hoppings'] = hoppings
+                data['onsite_energies'] = onsite_energies
+                data['n_hoppings'] = n_hoppings
+                data['n_orbitals'] = n_orbitals
             else:
                 self.logger.error(
-                    "Could not find the initial model. Please, check your inputs: "
-                    "1) define `model_file` pointing to your Wannier90 `*_hr.dat` "
-                    "hoppings file, or 2) specify the `lattice_model` to study among the "
-                    "accepted values.",
-                    data={"lattice_model": self._valid_lattice_models},
+                    'Could not find the initial model. Please, check your inputs: '
+                    '1) define `model_file` pointing to your Wannier90 `*_hr.dat` '
+                    'hoppings file, or 2) specify the `lattice_model` to study among the '
+                    'accepted values.',
+                    data={'lattice_model': self._valid_lattice_models},
                 )
 
             # KGrids
             # For band structure calculations
-            data["n_k_path"] = kwargs.get("n_k_path", 90)
+            data['n_k_path'] = kwargs.get('n_k_path', 90)
             # For full_bz diagonalization
-            data["k_grid"] = kwargs.get("k_grid", [1, 1, 1])
+            data['k_grid'] = kwargs.get('k_grid', [1, 1, 1])
 
             # Plotting arguments
-            data["plot_hoppings"] = kwargs.get("plot_hoppings", False)
-            data["plot_bands"] = kwargs.get("plot_bands", False)
+            data['plot_hoppings'] = kwargs.get('plot_hoppings', False)
+            data['plot_bands'] = kwargs.get('plot_bands', False)
             # DOS calculation and plotting
-            data["dos"] = kwargs.get("dos", False)
-            data["dos_gaussian_width"] = kwargs.get("dos_gaussian_width", 0.1)
-            data["dos_delta_energy"] = kwargs.get("dos_delta_energy", 0.01)
+            data['dos'] = kwargs.get('dos', False)
+            data['dos_gaussian_width'] = kwargs.get('dos_gaussian_width', 0.1)
+            data['dos_delta_energy'] = kwargs.get('dos_delta_energy', 0.01)
         self.data = data
         self.to_json()
 
@@ -153,7 +153,7 @@ class Input(ValidLatticeModels):
         """
         Stores the input data in a JSON file in the working_directory.
         """
-        with open(f"{self.data.get('working_directory')}/input_ssmf.json", "w") as file:
+        with open(f"{self.data.get('working_directory')}/input_ssmf.json", 'w') as file:
             json.dump(self.data, file, indent=4)
 
     def read_from_file(self, input_file: str) -> dict:
@@ -167,22 +167,22 @@ class Input(ValidLatticeModels):
             (dict): dictionary with the input data read from the JSON input file.
         """
         try:
-            with open(input_file, "r") as file:
+            with open(input_file, 'r') as file:
                 input_data = json.load(file)
         except FileNotFoundError:
             self.logger.error(
-                "Input file not found.",
-                extra={"input_file": input_file},
+                'Input file not found.',
+                extra={'input_file': input_file},
             )
         except json.JSONDecodeError:
             self.logger.error(
-                "Failed to decode JSON in input file.",
-                extra={"input_file": input_file},
+                'Failed to decode JSON in input file.',
+                extra={'input_file': input_file},
             )
-        code_name = input_data.get("code", "")
-        if code_name != "SSMF":
+        code_name = input_data.get('code', '')
+        if code_name != 'SSMF':
             self.logger.error(
-                "Could not recognize the input JSON file as readable by the SSMF code.",
-                extra={"input_file": input_file},
+                'Could not recognize the input JSON file as readable by the SSMF code.',
+                extra={'input_file': input_file},
             )
         return input_data
