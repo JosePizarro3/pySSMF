@@ -32,6 +32,8 @@ dev = [
     'pytest==3.10.0',
     'ruff',
     "structlog==22.3.0",
+    "lxml_html_clean>=0.1.0",
+    "PyQt5==5.15.10",
 ]
 
 [tool.ruff]

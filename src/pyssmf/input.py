@@ -40,7 +40,7 @@ class Input(ValidLatticeModels):
         Reads the input arguments and stores then in self.data in a JSON file generated
         in the working_directory.
             - 'logger': the logger where the errors, warnings, etc. will be printed.
-            - 'code': 'SSMF'.
+            - 'code': 'pySSMF'.
             - 'working_directory': working directory where the files are located.
             If 'read_from_input_file' is true:
                 - 'input_file': path to the input JSON file in the working directory.
@@ -64,7 +64,7 @@ class Input(ValidLatticeModels):
         """
         super().__init__()
         # Initializing data
-        data = {'code': 'SSMF'}
+        data = {'code': 'pySSMF'}
 
         # Check working_directory and stores it in data
         if not kwargs.get('working_directory'):
@@ -158,7 +158,7 @@ class Input(ValidLatticeModels):
 
     def read_from_file(self, input_file: str) -> dict:
         """
-        Reads the input data from a JSON file provided it is a SSMF code input file.
+        Reads the input data from a JSON file provided it is a pySSMF code input file.
 
         Args:
             input_file (str): path to the input JSON file in the working directory.
@@ -180,9 +180,9 @@ class Input(ValidLatticeModels):
                 extra={'input_file': input_file},
             )
         code_name = input_data.get('code', '')
-        if code_name != 'SSMF':
+        if code_name != 'pySSMF':
             self.logger.error(
-                'Could not recognize the input JSON file as readable by the SSMF code.',
+                'Could not recognize the input JSON file as readable by the pySSMF code.',
                 extra={'input_file': input_file},
             )
         return input_data

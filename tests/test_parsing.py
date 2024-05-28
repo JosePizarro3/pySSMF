@@ -18,8 +18,8 @@ import pytest
 import numpy as np
 import os
 
-from src.schema import Model
-from src.parsing import MinimalWannier90Parser
+from pyssmf.schema import Model
+from pyssmf.parsing import MinimalWannier90Parser
 
 
 def approx(value, abs=0, rel=1e-6):

@@ -17,7 +17,7 @@
 import pytest
 import numpy as np
 
-from src.schema import System, BravaisLattice, Model
+from pyssmf.schema import System, BravaisLattice, Model
 
 
 def get_template_system():
