@@ -3,6 +3,9 @@ debug.py
 work_dir/
 work_dir/*
 
+# VSCode debugger
+.vscode/launch.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
