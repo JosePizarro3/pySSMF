@@ -1,15 +1,25 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/.pyenv/bin/python",
+    "python.defaultInterpreterPath": ".pyenv/bin/python",
     "python.terminal.activateEnvInCurrentTerminal": true,
-    "[python]": {
-        "editor.rulers": [
-            90
-        ],
-        "editor.renderWhitespace": "all",
-        "editor.tabSize": 4,
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true,
+    "editor.rulers": [90],
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 4,
+    "[javascript]": {
+      "editor.tabSize": 2
     },
-    "ruff.lint.args": ["--select=E,W,F,PL", "--ignore=E501,E701,E731,E402,PLR0911,PLR0912,PLR0913,PLR0915,PLR2004,PLW0603,PLW2901,PLR1714,PLR5501", "--exclude=__init__.py"]
-}
-
+    "files.trimTrailingWhitespace": true,
+    "files.watcherExclude": {
+      "${workspaceFolder}/.pyenv/**": true
+    },
+    "files.exclude": {
+      "\"**/*.pyc\": {\"when\": \"$(basename).py\"}": true,
+      "**/__pycache__": true,
+      "**/node_modules": true
+    },
+    "python.testing.pytestPath": "pytest",
+    "python.testing.pytestArgs": ["tests"],
+    "python.testing.unittestEnabled": false,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
+  }
+  
