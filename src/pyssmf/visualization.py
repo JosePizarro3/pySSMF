@@ -47,17 +47,17 @@ def plot_hopping_matrices(
         for i, ax in enumerate(axes):
             ax.clear()
             if idx + i < total_matrices:
-                ax.imshow(matrices[idx + i], cmap="inferno", vmin=0, vmax=max_value)
-                ax.set_title(f"$N_R$ = {idx + i}")
-            ax.axis("off")
+                ax.imshow(matrices[idx + i], cmap='inferno', vmin=0, vmax=max_value)
+                ax.set_title(f'$N_R$ = {idx + i}')
+            ax.axis('off')
 
         fig.canvas.draw_idle()
 
     # Create the slider
-    ax_slider = plt.axes([0.2, 0.01, 0.65, 0.03], facecolor="lightgoldenrodyellow")
+    ax_slider = plt.axes((0.2, 0.01, 0.65, 0.03), facecolor='lightgoldenrodyellow')
     slider = Slider(
         ax_slider,
-        "Start $N_R$",
+        'Start $N_R$',
         0,
         total_matrices - display_count,
         valinit=0,
@@ -69,16 +69,16 @@ def plot_hopping_matrices(
     update(0)
 
     # Add a colorbar to the figure, adjust the position for better spacing
-    cbar_ax = fig.add_axes([0.93, 0.15, 0.02, 0.7])
+    cbar_ax = fig.add_axes((0.93, 0.15, 0.02, 0.7))
     fig.colorbar(
         plt.cm.ScalarMappable(
-            cmap="inferno", norm=plt.Normalize(vmin=0, vmax=max_value)
+            cmap='inferno', norm=plt.Normalize(vmin=0, vmax=max_value)
         ),
         cax=cbar_ax,
     )
 
     plt.tight_layout(
-        rect=[0, 0.05, 0.9, 1]
+        rect=(0, 0.05, 0.9, 1)
     )  # Adjust the right bound to 0.9 to provide space for the colorbar
     plt.show()
 
@@ -102,12 +102,12 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
         plt.plot(
             np.arange(len(eigenvalues)),
             eigenvalues[:, band_idx],
-            label=f"Band {band_idx + 1}",
+            label=f'Band {band_idx + 1}',
         )
 
     # Customize x-axis labeling based on special points
     if special_points is not None:
-        x_labels = [""] * (len(special_points))  # Initialize labels with empty strings
+        x_labels = [''] * (len(special_points))  # Initialize labels with empty strings
         x_ticks = []
 
         i = 0
@@ -122,9 +122,9 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
         plt.xticks(x_ticks, x_labels)
 
     plt.xlim(0, len(eigenvalues) - 1)
-    plt.xlabel("k-points")
-    plt.ylabel("Energy (eV)")
-    plt.title("Band Structure")
+    plt.xlabel('k-points')
+    plt.ylabel('Energy (eV)')
+    plt.title('Band Structure')
     plt.legend()
     plt.grid(True)
 
@@ -142,13 +142,13 @@ def plot_dos(energies, orbital_dos, total_dos):
     """
     # Create a figure
     plt.figure(figsize=(8, 6))
-    plt.plot(energies, total_dos, label="Total DOS", color="k", linewidth=3.5)
+    plt.plot(energies, total_dos, label='Total DOS', color='k', linewidth=3.5)
 
     # Plot orbital-resolved DOS
     for i, orb_dos in enumerate(orbital_dos):
-        plt.plot(energies, orb_dos, label=f"Orbital {i + 1}")
+        plt.plot(energies, orb_dos, label=f'Orbital {i + 1}')
 
-    plt.xlabel("Energy (eV)")
-    plt.ylabel("Density of States (DOS)")
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Density of States (DOS)')
     plt.legend()
     plt.show()

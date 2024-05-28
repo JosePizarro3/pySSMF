@@ -35,7 +35,7 @@ class System(MSection):
 
     labels = Quantity(
         type=str,
-        shape=["n_atoms"],
+        shape=['n_atoms'],
         description="""
         List containing the labels of the atoms. In the usual case, these correspond to
         the chemical symbols of the atoms. One can also append an index if there is a
@@ -50,8 +50,8 @@ class System(MSection):
 
     positions = Quantity(
         type=np.float64,
-        shape=["n_atoms", 3],
-        unit="angstrom",
+        shape=['n_atoms', 3],
+        unit='angstrom',
         description="""
         Positions of all the species, in cartesian coordinates. This metadata defines a
         configuration and is therefore required. For alloys where concentrations of
@@ -63,7 +63,7 @@ class System(MSection):
     lattice_vectors = Quantity(
         type=np.float64,
         shape=[3, 3],
-        unit="angstrom",
+        unit='angstrom',
         description="""
         Lattice vectors of the simulation cell in cartesian coordinates. The
         last (fastest) index runs over the $x,y,z$ Cartesian coordinates, and the first
@@ -74,7 +74,7 @@ class System(MSection):
     reciprocal_lattice_vectors = Quantity(
         type=np.float64,
         shape=[3, 3],
-        unit="1/angstrom",
+        unit='1/angstrom',
         description="""
         Reciprocal lattice vectors of the simulation cell, in cartesian coordinates and with the 2 $pi$ pre-factor.
         The first index runs over the $x,y,z$ Cartesian coordinates, and the second index runs
@@ -107,8 +107,8 @@ class BravaisLattice(MSection):
 
     points = Quantity(
         type=np.float64,
-        shape=["n_points", 3],
-        unit="angstrom",
+        shape=['n_points', 3],
+        unit='angstrom',
         description="""
         Values of the Bravais lattice points used to obtain the hopping integrals. They are
         sorted from smaller to larger values of the norm.
@@ -145,7 +145,7 @@ class Model(MSection):
 
     degeneracy_factors = Quantity(
         type=np.int32,
-        shape=["n_points"],
+        shape=['n_points'],
         description="""
         Degeneracy of each Bravais lattice point.
         """,
@@ -153,8 +153,8 @@ class Model(MSection):
 
     onsite_energies = Quantity(
         type=np.float64,
-        shape=["n_orbitals"],
-        unit="eV",
+        shape=['n_orbitals'],
+        unit='eV',
         description="""
         Values of the onsite energies for each orbital.
         """,
@@ -162,8 +162,8 @@ class Model(MSection):
 
     hopping_matrix = Quantity(
         type=np.complex128,
-        shape=["n_points", "n_orbitals", "n_orbitals"],
-        unit="eV",
+        shape=['n_points', 'n_orbitals', 'n_orbitals'],
+        unit='eV',
         description="""
         Real space hopping matrix for each Bravais lattice point as a matrix of dimension
         (n_orbitals * n_orbitals).

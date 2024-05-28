@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from src.hopping_pruning import Pruner
+from pyssmf.hopping_pruning import Pruner
 
 
 def test_pruner(example_model):

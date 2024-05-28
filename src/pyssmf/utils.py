@@ -21,7 +21,7 @@ from typing import Union
 import numpy as np
 
 
-def get_files(pattern: str, filepath: str, stripname: str = "", deep: bool = True):
+def get_files(pattern: str, filepath: str, stripname: str = '', deep: bool = True):
     """
     Get files following the `pattern` with respect to the file `stripname` (usually this
     being the mainfile of the given parser) up to / down from the `filepath` (`deep=True` going
@@ -37,8 +37,8 @@ def get_files(pattern: str, filepath: str, stripname: str = "", deep: bool = Tru
         list: List of found files.
     """
     for _ in range(10):
-        filenames = glob(f"{os.path.dirname(filepath)}/{pattern}")
-        pattern = os.path.join("**" if deep else "..", pattern)
+        filenames = glob(f'{os.path.dirname(filepath)}/{pattern}')
+        pattern = os.path.join('**' if deep else '..', pattern)
         if filenames:
             break
 

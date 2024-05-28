@@ -18,8 +18,8 @@ import pytest
 import numpy as np
 import os
 
-from src.schema import Model
-from src.parsing import MinimalWannier90Parser
+from pyssmf.schema import Model
+from pyssmf.parsing import MinimalWannier90Parser
 
 
 def approx(value, abs=0, rel=1e-6):
@@ -31,7 +31,7 @@ def test_wannier90_parser():
 
     model = Model()
     filepath = os.path.join(
-        os.path.dirname(__file__), "data/wannier90/wannier90_hr.dat"
+        os.path.dirname(__file__), 'data/wannier90/wannier90_hr.dat'
     )
     MinimalWannier90Parser().parse(filepath, model, None)
 
@@ -56,7 +56,7 @@ def test_wannier90_parser():
 
     # System
     system = bravais_lattice.system
-    assert system.labels[:4] == ["Nb", "Nb", "Ta", "Ta"]
+    assert system.labels[:4] == ['Nb', 'Nb', 'Ta', 'Ta']
     assert np.array_equal(
         system.positions[0].magnitude, np.array([0.0, 7.29193, 22.06006])
     )

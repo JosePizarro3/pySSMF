@@ -17,13 +17,13 @@
 import pytest
 import numpy as np
 
-from src.schema import System, BravaisLattice, Model
+from pyssmf.schema import System, BravaisLattice, Model
 
 
 def get_template_system():
     system = System()
     system.n_atoms = 2
-    system.labels = ["H", "O"]
+    system.labels = ['H', 'O']
     system.positions = np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1]])
     system.lattice_vectors = np.identity(3)
     return system

@@ -20,7 +20,7 @@ import numpy as np
 def test_system(example_system):
     """Tests whether an instance of System is created and properly populated."""
     assert example_system.n_atoms == 2
-    assert example_system.labels == ["H", "O"]
+    assert example_system.labels == ['H', 'O']
     assert np.array_equal(
         example_system.positions.magnitude, np.array([[0.0, 0.0, 0.0], [0.1, 0.1, 0.1]])
     )

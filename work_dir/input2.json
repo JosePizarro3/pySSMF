@@ -1,5 +1,0 @@
-{
-    "code": "SSMF",
-    "prune_threshold": 0.03,
-    "file_tbmodel": "/home/josepizarro/fairmat/data_examples/PROJ_wannier90/SOC_efield/0.1meVAA/wannier90_hr.dat"
-}
