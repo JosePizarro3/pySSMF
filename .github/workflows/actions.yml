@@ -12,20 +12,13 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install '.[dev]' --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
-        pip install coverage coveralls
+        pip install '.[dev]'
     - name: mypy
       run: |
-        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/nomad_simulations tests
+        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/pyssmf tests
     - name: Test with pytest
       run: |
-        python -m coverage run -m pytest -sv tests
-    - name: Submit to coveralls
-      continue-on-error: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        coveralls --service=github
+        python -m pytest -sv tests
   build-and-install:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +34,7 @@ jobs:
         python -m build --sdist
     - name: Install the package
       run: |
-        pip install dist/*.tar.gz --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
+        pip install dist/*.tar.gz
   ruff-linting:
       runs-on: ubuntu-latest
       steps:

@@ -1,12 +1,10 @@
 # Upload python package to pypi server and github release.
 # Reference: https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 
-name: Upload Python Package
-
+name: upload-to-pypi
 on:
   release:
     types: [published]
-
 jobs:
   # publish-to-pypi:
   #   name: >-
