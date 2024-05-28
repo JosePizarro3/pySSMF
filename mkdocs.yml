@@ -1,8 +1,8 @@
-site_name: "SSMF Documentation"
+site_name: "pySSMF Documentation"
 site_description: |
-  SSMF Documentation for strongly correlated metals 
-site_author: JMPizarro
-repo_url: https://github.com/JosePizarro3/SSMF
+  oySSMF Documentation for strongly correlated systems
+site_author: JoseMPizarro
+repo_url: https://github.com/JosePizarro3/pySSMF
 nav:
   - Home: index.md
 theme:

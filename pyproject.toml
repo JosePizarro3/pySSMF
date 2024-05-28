@@ -22,9 +22,9 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/JosePizarro3/SSMF"
-"Bug Tracker" = "https://github.com/JosePizarro3/SSMF/issues"
-"Documentation" = "https://josepizarro3.github.io/SSMF/"
+"Homepage" = "https://github.com/JosePizarro3/pySSMF"
+"Bug Tracker" = "https://github.com/JosePizarro3/pySSMF/issues"
+"Documentation" = "https://josepizarro3.github.io/pySSMF/"
 
 [project.optional-dependencies]
 dev = [
