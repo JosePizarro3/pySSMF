@@ -4,7 +4,7 @@ on:
     branches:
       - develop # Triggers deployment on push to the main branch
 jobs:
-  deploy:
+  mkdocs-deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'  # Only deployed for the develop branch
     steps:
