@@ -6,7 +6,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: build # This ensures that the deployment job runs after the build job
     if: github.ref == 'refs/heads/develop'  # Only deployed for the develop branch
     steps:
       - name: Checkout Repository
