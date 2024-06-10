@@ -17,7 +17,7 @@
 import numpy as np
 import logging
 
-from .schema import Model
+from pyssmf.schema import Model
 
 
 class Pruner:

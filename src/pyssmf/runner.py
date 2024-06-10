@@ -18,12 +18,12 @@ import numpy as np
 import os
 from scipy.stats import norm
 
-from .input import ValidLatticeModels
-from .schema import Model
-from .parsing import MinimalWannier90Parser, ToyModels
-from .hopping_pruning import Pruner
-from .tb_hamiltonian import TBHamiltonian
-from .visualization import plot_hopping_matrices, plot_band_structure, plot_dos
+from pyssmf.input import ValidLatticeModels
+from pyssmf.schema import Model
+from pyssmf.parsing import MinimalWannier90Parser, ToyModels
+from pyssmf.hopping_pruning import Pruner
+from pyssmf.tb_hamiltonian import TBHamiltonian
+from pyssmf.visualization import plot_hopping_matrices, plot_band_structure, plot_dos
 
 
 class Runner(ValidLatticeModels):

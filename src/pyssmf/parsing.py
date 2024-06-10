@@ -23,8 +23,8 @@ from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.units import ureg
 
 # NOMAD schema
-from .schema import System, BravaisLattice, Model
-from .utils import get_files
+from pyssmf.schema import System, BravaisLattice, Model
+from pyssmf.utils import get_files
 
 re_n = r'[\n\r]'
 

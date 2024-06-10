@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
+          uv pip install coveralls --system
           uv pip install '.[dev]' --system
       - name: mypy
         run: |
