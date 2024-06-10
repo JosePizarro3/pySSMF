@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/JosePizarro3/pySSMF/badge.svg?branch=develop)](https://coveralls.io/github/JosePizarro3/pySSMF?branch=develop)
+
 # pySSMF
 
 ## Installation steps
@@ -16,17 +18,50 @@ python3.9 -m venv .pyenv
 source .pyenv/bin/activate
 ```
 
+We recommend using `uv` for pip installing all packages:
+```sh
+pip install uv
+```
+
 Make sure to have pip upgraded to its latest version:
 ```sh
-pip install --upgrade pip
+uv pip install --upgrade pip
 ```
 
 Now, install the dependencies in editable mode (this is done by adding the flag `-e` and it is useful when debugging the code):
 ```sh
-pip install -e '.[dev]'
+uv pip install -e '.[dev]'
 ```
 
 The `[dev]` option will allow to install the optional-dependencies specified in the configuration `pyproject.toml` file.
+
+### Run the tests
+
+You can run local tests using the `pytest` package:
+
+```sh
+python -m pytest -sv tests
+```
+
+where the `-s` and `-v` options toggle the output verbosity.
+
+Our CI/CD pipeline produces a more comprehensive test report using `coverage` and `coveralls` packages. We suggest you to generate your own coverage reports locally by doing:
+
+```sh
+uv pip install coverage coveralls
+python -m pytest --cov=src  tests
+```
+
+### Run linting and auto-formatting
+
+We use [Ruff](https://docs.astral.sh/ruff/) for auto-formatting our Python modules. This package is included as part of the `[dev]` dependencies of the project, and can be run in the terminal:
+
+```sh
+ruff check .
+ruff format . --check
+```
+
+Ruff auto-formatting is also a part of the GitHub workflow actions. Make sure that before you make a Pull Request, `ruff format . --check` runs in your local without any errors otherwise the workflow action will fail.
 
 ### Using VSCode for debugging
 
