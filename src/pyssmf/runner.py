@@ -220,7 +220,7 @@ class Runner(ValidLatticeModels):
         self.logger.info('BZ diagonalization calculation finished!')
         return eigenvalues, eigenvectors, fermi_level
 
-    def calculate_band_structure(self, fermi_level: np.float64 = 0.0):
+    def calculate_band_structure(self, fermi_level: float = 0.0):
         """
         Calculates the band structure of the tight-binding model in a given `n_k_path`.
         """
