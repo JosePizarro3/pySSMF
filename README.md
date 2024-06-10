@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/JosePizarro3/pySSMF/badge.svg?branch=develop)](https://coveralls.io/github/JosePizarro3/pySSMF?branch=develop)
+
 # pySSMF
 
 ## Installation steps

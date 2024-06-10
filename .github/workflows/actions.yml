@@ -21,7 +21,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
-          pip install --upgrade pip --system
           uv pip install '.[dev]' --system
       - name: mypy
         run: |
