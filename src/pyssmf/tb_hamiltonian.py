@@ -22,7 +22,8 @@ from ase.dft.kpoints import monkhorst_pack, BandPath
 
 from nomad.atomutils import Formula
 from nomad.units import ureg
-from .schema import Model
+
+from pyssmf.schema import Model
 
 
 class KSampling:
