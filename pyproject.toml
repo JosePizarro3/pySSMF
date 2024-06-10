@@ -7,12 +7,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = 'pySSMF'
-version = '0.1.0'
 description = 'A Python package to solve the Slave-Spin Mean-Field equations for tight-binding models in strongly correlated systems'
 authors = [
     { name = "Jose M. Pizarro", email = "jose.pizarro@physik.hu-berlin.de" }
 ]
-license = { text = "Apache-2.0" }
+maintainers = [
+    { name = "Jose M. Pizarro", email = "jose.pizarro@physik.hu-berlin.de" }
+]
+dynamic = ["version"]
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
 readme = "README.md"
 dependencies = [
@@ -29,11 +32,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     'mypy==1.5.1',
-    'pytest==3.10.0',
+    'pytest',
+    'pytest-timeout',
+    'pytest-cov',
     'ruff',
     "structlog==22.3.0",
     "lxml_html_clean>=0.1.0",
-    "PyQt5==5.15.10",
 ]
 
 [tool.ruff]
