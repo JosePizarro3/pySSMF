@@ -49,7 +49,7 @@ Our CI/CD pipeline produces a more comprehensive test report using `coverage` an
 
 ```sh
 uv pip install coverage coveralls
-python -m pytest --cov=src  tests
+python -m pytest --cov=src tests
 ```
 
 ### Run linting and auto-formatting
