@@ -55,7 +55,7 @@ jobs:
           python -m build --sdist
       - name: Install the package
         run: |
-          uv pip install dist/*.tar.gz
+          uv pip install dist/*.tar.gz --system
   ruff-linting:
       runs-on: ubuntu-latest
       steps:
