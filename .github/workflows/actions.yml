@@ -22,7 +22,7 @@ jobs:
         run: |
           pip install uv
           uv pip install coveralls --system
-          uv pip install '.[dev]' --system
+          uv pip install -e '.[dev]' --system
       - name: mypy
         run: |
           python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional src/pyssmf tests
