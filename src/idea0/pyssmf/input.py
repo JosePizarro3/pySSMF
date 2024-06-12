@@ -146,6 +146,8 @@ class Input(ValidLatticeModels):
             data['dos'] = kwargs.get('dos', False)
             data['dos_gaussian_width'] = kwargs.get('dos_gaussian_width', 0.1)
             data['dos_delta_energy'] = kwargs.get('dos_delta_energy', 0.01)
+            # Nominal number of electrons
+            data['n_electrons'] = kwargs.get('n_electrons', 1)
         self.data = data
         self.to_json()
 
