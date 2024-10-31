@@ -14,6 +14,5 @@
 # limitations under the License.
 #
 
-import structlog
-
-LOGGER = structlog.get_logger(__name__)
+from .input import Input, ValidLatticeModels
+from .runner import Runner

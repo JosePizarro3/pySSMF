@@ -20,138 +20,126 @@ import json
 import os
 import numpy as np
 
-
-class ValidLatticeModels(ABC):
-    """Abstract class that defines the valid lattice models covered in this code by specific strings."""
-
-    def __init__(self, logger: logging.Logger = logging.getLogger(__name__)):
-        self.logger = logger
-        self._valid_lattice_models = [
-            'linear',
-            'square',
-            'honeycomb',
-            'triangular',
-        ]  # TODO extend this
+from . import LOGGER
 
 
-class Input(ValidLatticeModels):
+class Input:
     def __init__(self, **kwargs):
         """
-        Reads the input arguments and stores then in self.data in a JSON file generated
-        in the working_directory.
-            - 'logger': the logger where the errors, warnings, etc. will be printed.
-            - 'code': 'pySSMF'.
-            - 'working_directory': working directory where the files are located.
-            If 'read_from_input_file' is true:
-                - 'input_file': path to the input JSON file in the working directory.
-                - 'input_data': read input data from input file.
-            Else:
-                If 'tb_model_file' is specified:
-                    - 'tb_model': path to the tight-binding model file in the working directory.
-                    - 'prune_threshold': if 'pruning' is True, it is set to the read or the
-                        default 0.01 value.
-                If 'lattice_model' is specified:
-                    - 'tb_model': the specific label for the model to be applied (defined
-                        in self._valid_lattice_models).
-                    - 'hoppings': list of values for the hoppings in order from nearest to
-                        farthest hopping.
-                    - 'n_hoppings': integer specifying how many hoppings are included. Only
-                        supported up to 3.
-                    - 'n_orbitals': integer specifying how many orbitals are included.
+        Reads the input arguments and stores then in a dictionary called `data` and in a
+        JSON file, `input_ssmf.json` generated in the working_directory.
 
-        Then, it stores the input parameters in a JSON in the working directory with the name
-        'input_ssmf.json'.
+        Attributes:
+            data (dict): A dictionary that stores input arguments. The keys and their
+            corresponding values are as follows:
+                - 'code' (str): Always set to 'pySSMF'.
+                - 'working_directory' (str): The directory where the files are located.
+                - 'input_file' (str): Path to the input JSON file in the working directory.
+                Only present if 'read_from_input_file' is True.
+                - 'lattice_model' (str): the specific lattice model to be calculated. See
+                `valid_lattice_models` for accepted values.
+                - 'hoppings' (list): List of values for the hoppings in order from nearest to
+                farthest hopping. Only present if 'lattice_model' is specified.
+                - 'n_hoppings' (int): Integer specifying how many hoppings are included.
+                Only supported up to 3. Only present if 'lattice_model' is specified.
+                - 'n_orbitals' (int): Integer specifying how many orbitals are included.
+                Only present if 'lattice_model' is specified.
         """
         super().__init__()
-        # Initializing data
+        # List of covered lattice toy models
+        # TODO extend this list
+        _valid_lattices = [
+            'linear',
+        ]
+
+        # Reading input from an `input.json` file
+        read_input_file = kwargs.get('read_from_input_file', False)
+        if read_input_file:
+            input_file = os.path.join(
+                kwargs.get('working_directory'), kwargs.get('input_file')
+            )
+            data = self.read_from_file(input_file)
+            data['input_file'] = kwargs.get('input_file')
+            self.data = data
+            self.to_json()
+            return
+
+        # If `input_file` is not specified, we populate `data` with the passed arguments instead
+        # Initializing `data`
         data = {'code': 'pySSMF'}
 
         # Check working_directory and stores it in data
         if not kwargs.get('working_directory'):
-            self.logger.error(
+            raise KeyError(
                 'Could not find specified the working_directory in the input.'
             )
-            return
         data['working_directory'] = kwargs.get('working_directory')
 
-        # Read from input file if provided in the argument
-        read_input_file = kwargs.get('read_from_input_file', False)
-        if read_input_file:
-            data['input_file'] = kwargs.get('input_file')
-            input_file = os.path.join(
-                kwargs.get('working_directory'), kwargs.get('input_file')
+        # Lattice models details
+        lattice_model_id = kwargs.get('lattice_model', '')
+        if lattice_model_id not in _valid_lattices:
+            raise ValueError(f'{lattice_model_id} is not a valid lattice model.')
+        data['lattice_model'] = lattice_model_id
+        # We check if 'hoppings' was empty
+        hoppings = kwargs.get('hoppings', [])
+        n_hoppings = len(hoppings)
+        if n_hoppings == 0:
+            n_hoppings = 1
+            n_orbitals = 1
+            hoppings = [[1.0]]
+            LOGGER.warning(
+                'Argument `hoppings` was empty, so we consider a nearest neighbor, single-orbital model'
             )
-            data['input_data'] = self.read_from_file(input_file)
-        else:
-            # We check whether a model_file has been defined or a model_label
-            if kwargs.get('tb_model_file'):
-                data['tb_model'] = kwargs.get('tb_model_file')
-                # pruning only applies for tb_model_file cases
-                if kwargs.get('pruning', False):
-                    data['prune_threshold'] = kwargs.get('prune_threshold', 0.01)
-            elif kwargs.get('lattice_model') in self._valid_lattice_models:
-                data['tb_model'] = kwargs.get('lattice_model')
-                hoppings = kwargs.get('hoppings', [])
-                # We check if 'hoppings' was empty
-                if len(hoppings) == 0:
-                    n_hoppings = 1
-                    n_orbitals = 1
-                    hoppings = [[1.0]]
-                # Only up to 3 neighbors hoppings supported
-                n_hoppings = len(hoppings)
-                if n_hoppings > 3:
-                    self.logger.error(
-                        'Maximum n_hoppings models supported is 3. Please, select '
-                        'a smaller number.'
-                    )
-                    return
-                n_orbitals = len(hoppings[0])
-                # We check shape for all R point to be (n_orbitals, n_orbitals)
-                if not all(
-                    np.shape(hop_point) == (n_orbitals, n_orbitals)
-                    for hop_point in hoppings
-                ):
-                    self.logger.error(
-                        'Dimensions of each hopping matrix do not coincide with'
-                        '(n_orbitals, n_orbitals).',
-                        data={'n_orbitals': n_orbitals},
-                    )
-                # TODO improve this
-                onsite_energies = kwargs.get('onsite_energies', [])
-                if len(onsite_energies) == 0:
-                    onsite_energies = [0.0] * n_orbitals
-                data['hoppings'] = hoppings
-                data['onsite_energies'] = onsite_energies
-                data['n_hoppings'] = n_hoppings
-                data['n_orbitals'] = n_orbitals
-            else:
-                self.logger.error(
-                    'Could not find the initial model. Please, check your inputs: '
-                    '1) define `model_file` pointing to your Wannier90 `*_hr.dat` '
-                    'hoppings file, or 2) specify the `lattice_model` to study among the '
-                    'accepted values.',
-                    data={'lattice_model': self._valid_lattice_models},
-                )
+        # Only up to 3 neighbors hoppings supported
+        n_hoppings = len(hoppings)
+        if n_hoppings > 3:
+            raise ValueError(
+                'Maximum n_hoppings models supported is 3. Please, select '
+                'a smaller number.'
+            )
+        # We check shape for all Wigner-Seitz points hoppings to be (n_orbitals, n_orbitals)
+        n_orbitals = len(hoppings[0])
+        if not all(
+            np.shape(hop_point) == (n_orbitals, n_orbitals) for hop_point in hoppings
+        ):
+            raise ValueError(
+                'Dimensions of each hopping matrix do not coincide with'
+                '(n_orbitals, n_orbitals).',
+                data={'n_orbitals': n_orbitals},
+            )
+        # Extracting `onsite_energies`, `hoppings`
+        onsite_energies = kwargs.get('onsite_energies', [])
+        if len(onsite_energies) == 0:
+            onsite_energies = [0.0] * n_orbitals
+            LOGGER.warning(
+                'Attribute `onsite_energies` was empty, so we consider all zeros with the dimensions of `(n_orbitals)`.'
+            )
+        data['hoppings'] = hoppings
+        data['onsite_energies'] = onsite_energies
+        data['n_hoppings'] = n_hoppings
+        data['n_orbitals'] = n_orbitals
 
-            # KGrids
-            # For band structure calculations
-            data['n_k_path'] = kwargs.get('n_k_path', 90)
-            # For full_bz diagonalization
-            data['k_grid'] = kwargs.get('k_grid', [1, 1, 1])
+        # KGrids
+        # For band structure calculations
+        data['n_k_path'] = kwargs.get('n_k_path', 90)
+        # For full_bz diagonalization
+        data['k_grid'] = kwargs.get('k_grid', [1, 1, 1])
 
-            # Plotting arguments
-            data['plot_hoppings'] = kwargs.get('plot_hoppings', False)
-            data['plot_bands'] = kwargs.get('plot_bands', False)
-            # DOS calculation and plotting
-            data['dos'] = kwargs.get('dos', False)
-            data['dos_gaussian_width'] = kwargs.get('dos_gaussian_width', 0.1)
-            data['dos_delta_energy'] = kwargs.get('dos_delta_energy', 0.01)
+        # Plotting arguments
+        data['plot_hoppings'] = kwargs.get('plot_hoppings', False)
+        data['plot_bands'] = kwargs.get('plot_bands', False)
+        # DOS calculation and plotting
+        data['dos'] = kwargs.get('dos', False)
+        data['dos_gaussian_width'] = kwargs.get('dos_gaussian_width', 0.1)
+        data['dos_delta_energy'] = kwargs.get('dos_delta_energy', 0.01)
+        # Nominal number of electrons
+        data['n_electrons'] = kwargs.get('n_electrons', 1)
         self.data = data
         self.to_json()
 
-    def to_json(self):
+    def to_json(self) -> None:
         """
-        Stores the input data in a JSON file in the working_directory.
+        Stores the input data in a JSON file in the working directory.
         """
         with open(f"{self.data.get('working_directory')}/input_ssmf.json", 'w') as file:
             json.dump(self.data, file, indent=4)
@@ -169,19 +157,14 @@ class Input(ValidLatticeModels):
         try:
             with open(input_file, 'r') as file:
                 input_data = json.load(file)
-        except FileNotFoundError:
-            self.logger.error(
-                'Input file not found.',
-                extra={'input_file': input_file},
-            )
-        except json.JSONDecodeError:
-            self.logger.error(
-                'Failed to decode JSON in input file.',
+        except (FileNotFoundError, json.JSONDecodeError):
+            raise FileNotFoundError(
+                'Input file not found or failed to decode JSON input file.',
                 extra={'input_file': input_file},
             )
         code_name = input_data.get('code', '')
         if code_name != 'pySSMF':
-            self.logger.error(
+            raise ValueError(
                 'Could not recognize the input JSON file as readable by the pySSMF code.',
                 extra={'input_file': input_file},
             )

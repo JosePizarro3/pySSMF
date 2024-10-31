@@ -82,15 +82,16 @@ def plot_hopping_matrices(
     plt.show()
 
 
-def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
+def plot_band_structure(eigenvalues, fermi_level, tb_hamiltonian, special_points=None):
     """
     Plots the band structure of a Hamiltonian.
 
     Args:
         eigenvalues (np.ndarray): Eigenvalues of the Hamiltonian matrix of shape (Nk, Norb).
+        fermi_level (float): Fermi level.
         special_points (dict, optional): Dictionary of special points and their labels.
     """
-
+    # eigenvalues = eigenvalues - fermi_level
     num_bands = eigenvalues.shape[1]
 
     # Create a figure
@@ -120,6 +121,7 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
                 i += 1
         plt.xticks(x_ticks, x_labels)
 
+    plt.axhline(y=fermi_level, color='k', linestyle='--')
     plt.xlim(0, len(eigenvalues) - 1)
     plt.xlabel('k-points')
     plt.ylabel('Energy (eV)')
@@ -130,24 +132,28 @@ def plot_band_structure(eigenvalues, tb_hamiltonian, special_points=None):
     plt.show()
 
 
-def plot_dos(energies, orbital_dos, total_dos):
+def plot_dos(energies, fermi_level, orbital_dos, total_dos):
     """
     Plots the density of states (DOS) of a tight-binding Hamiltonian.
 
     Args:
         energies: the energies at which the DOS is evaluated.
+        fermi_level: the Fermi level.
         orbital_dos: the orbital-resolved DOS.
         total_dos: the total DOS.
     """
     # Create a figure
     plt.figure(figsize=(8, 6))
+    # energies = energies - fermi_level
     plt.plot(energies, total_dos, label='Total DOS', color='k', linewidth=3.5)
 
     # Plot orbital-resolved DOS
     for i, orb_dos in enumerate(orbital_dos):
         plt.plot(energies, orb_dos, label=f'Orbital {i + 1}')
 
+    plt.axvline(x=fermi_level, color='k', linestyle='--')
     plt.xlabel('Energy (eV)')
     plt.ylabel('Density of States (DOS)')
+    plt.grid(True)
     plt.legend()
     plt.show()

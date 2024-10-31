@@ -19,7 +19,6 @@ import numpy as np
 import ase
 from ase.spacegroup import get_spacegroup, spacegroup
 from ase.dft.kpoints import monkhorst_pack, BandPath
-
 from nomad.atomutils import Formula
 from nomad.units import ureg
 
